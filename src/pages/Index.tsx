@@ -1,10 +1,17 @@
-
 import React, { useState, useEffect } from 'react';
 import { CategoryFilter } from '@/components/CategoryFilter';
-import { FrequencyTable } from '@/components/FrequencyTable';
+import { FrequencyTabs } from '@/components/FrequencyTabs';
 import { LocationSelector } from '@/components/LocationSelector';
-import { FrequencyCategory, UserLocation, Frequency } from '@/lib/types';
-import { mockFrequencies, getFrequenciesByLocation, getFrequenciesByCategory, updateActivityStatus } from '@/lib/data';
+import { FrequencyCategory, UserLocation, Frequency, NewFrequencyInput } from '@/lib/types';
+import { 
+  getAllFrequencies, 
+  getFrequenciesByCategory, 
+  updateActivityStatus, 
+  getFavorites,
+  toggleFavorite,
+  getFavoriteFrequencies,
+  addFrequency
+} from '@/lib/data';
 import { useToast } from '@/components/ui/use-toast';
 
 const Index = () => {
@@ -12,6 +19,8 @@ const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState<FrequencyCategory>('All');
   const [frequencies, setFrequencies] = useState<Frequency[]>([]);
   const [filteredFrequencies, setFilteredFrequencies] = useState<Frequency[]>([]);
+  const [favoriteFrequencies, setFavoriteFrequencies] = useState<Frequency[]>([]);
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<UserLocation>({
     coordinates: null,
@@ -28,10 +37,14 @@ const Index = () => {
         // Add a small delay to simulate API fetch
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // In a real app, this would be an API call
-        const data = mockFrequencies;
-        setFrequencies(data);
-        setFilteredFrequencies(data);
+        // Get all frequencies including custom ones
+        const allFreqs = getAllFrequencies();
+        setFrequencies(allFreqs);
+        
+        // Load favorites from local storage
+        const favIds = getFavorites();
+        setFavoriteIds(favIds);
+        setFavoriteFrequencies(getFavoriteFrequencies(allFreqs));
         
         // Request user location on initial load
         requestUserLocation();
@@ -51,7 +64,12 @@ const Index = () => {
     
     // Set up timer to periodically update activity status
     const intervalId = setInterval(() => {
-      setFrequencies(prevFreqs => updateActivityStatus(prevFreqs));
+      setFrequencies(prevFreqs => {
+        const updated = updateActivityStatus(prevFreqs);
+        // Also update favorites when activity status changes
+        setFavoriteFrequencies(getFavoriteFrequencies(updated));
+        return updated;
+      });
     }, 15000); // Every 15 seconds
     
     return () => clearInterval(intervalId);
@@ -65,16 +83,42 @@ const Index = () => {
     setFilteredFrequencies(filtered);
   }, [selectedCategory, frequencies]);
 
-  // Sort frequencies by location when user location changes
-  useEffect(() => {
-    if (!userLocation.coordinates || !frequencies.length) return;
+  // Handle favorites changes
+  const handleToggleFavorite = (id: string) => {
+    const updatedFavorites = toggleFavorite(id);
+    setFavoriteIds(updatedFavorites);
     
-    const { latitude, longitude } = userLocation.coordinates;
-    const sortedFrequencies = getFrequenciesByLocation(frequencies, latitude, longitude);
+    // Update the favorite frequencies list
+    setFavoriteFrequencies(getFavoriteFrequencies(frequencies));
     
-    // Update the frequencies with distance information
-    setFrequencies(sortedFrequencies);
-  }, [userLocation.coordinates, frequencies.length]);
+    // Show toast notification
+    const freq = frequencies.find(f => f.id === id);
+    if (freq) {
+      const isFavorite = updatedFavorites.includes(id);
+      toast({
+        title: isFavorite ? 'Added to favorites' : 'Removed from favorites',
+        description: `${freq.name} has been ${isFavorite ? 'added to' : 'removed from'} your favorites`,
+      });
+    }
+  };
+
+  // Handle adding a new frequency
+  const handleAddFrequency = (data: NewFrequencyInput) => {
+    const newFreq = addFrequency(data);
+    
+    // Update the frequencies list with the new frequency
+    setFrequencies(prev => {
+      const updated = [...prev, newFreq];
+      // Also update filtered frequencies if needed
+      setFilteredFrequencies(getFrequenciesByCategory(updated, selectedCategory));
+      return updated;
+    });
+    
+    toast({
+      title: 'Frequency added',
+      description: `${data.name} has been added to your frequencies`,
+    });
+  };
 
   const requestUserLocation = () => {
     if (!navigator.geolocation) {
@@ -163,11 +207,15 @@ const Index = () => {
             />
           </div>
           
-          {/* Frequency Table */}
+          {/* Frequencies (All & Favorites) */}
           <div className="w-full">
-            <FrequencyTable 
+            <FrequencyTabs
               frequencies={filteredFrequencies}
+              favorites={favoriteFrequencies}
               loading={loading}
+              onToggleFavorite={handleToggleFavorite}
+              userCoordinates={userLocation.coordinates}
+              onAddFrequency={handleAddFrequency}
             />
           </div>
         </div>

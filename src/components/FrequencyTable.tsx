@@ -17,11 +17,15 @@ import {
 interface FrequencyTableProps {
   frequencies: Frequency[];
   loading?: boolean;
+  onToggleFavorite: (id: string) => void;
+  favorites: Set<string>;
 }
 
 export const FrequencyTable: React.FC<FrequencyTableProps> = ({ 
   frequencies,
-  loading = false
+  loading = false,
+  onToggleFavorite,
+  favorites
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOption, setSortOption] = useState<'distance' | 'activity' | 'frequency'>('distance');
@@ -156,6 +160,8 @@ export const FrequencyTable: React.FC<FrequencyTableProps> = ({
               key={freq.id} 
               frequency={freq} 
               isNew={showNewIndicator[freq.id]}
+              isFavorite={favorites.has(freq.id)}
+              onToggleFavorite={() => onToggleFavorite(freq.id)}
             />
           ))}
         </div>

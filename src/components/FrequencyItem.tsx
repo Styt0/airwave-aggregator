@@ -3,14 +3,21 @@ import React from 'react';
 import { Frequency } from '@/lib/types';
 import { ActivityIndicator } from './ActivityIndicator';
 import { cn } from '@/lib/utils';
-import { MapPin } from 'lucide-react';
+import { MapPin, Star } from 'lucide-react';
 
 interface FrequencyItemProps {
   frequency: Frequency;
   isNew?: boolean;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 }
 
-export const FrequencyItem: React.FC<FrequencyItemProps> = ({ frequency, isNew = false }) => {
+export const FrequencyItem: React.FC<FrequencyItemProps> = ({ 
+  frequency, 
+  isNew = false,
+  isFavorite = false,
+  onToggleFavorite
+}) => {
   const formatLastActivity = (date: Date | null) => {
     if (!date) return 'No recent activity';
     
@@ -31,11 +38,31 @@ export const FrequencyItem: React.FC<FrequencyItemProps> = ({ frequency, isNew =
   return (
     <div 
       className={cn(
-        "border rounded-xl p-4 transition-all duration-300 animate-scale-in",
+        "relative border rounded-xl p-4 transition-all duration-300 animate-scale-in",
         "backdrop-blur-md bg-card/80 hover:bg-card/90",
         "hover:shadow-md hover:scale-[1.01] group"
       )}
     >
+      {onToggleFavorite && (
+        <button 
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleFavorite();
+          }}
+          className="absolute top-3 right-3 z-10"
+          aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+        >
+          <Star 
+            className={cn(
+              "h-5 w-5 transition-colors",
+              isFavorite 
+                ? "fill-yellow-400 text-yellow-400" 
+                : "text-muted-foreground hover:text-yellow-400"
+            )} 
+          />
+        </button>
+      )}
+      
       <div className="flex justify-between items-start">
         <div>
           <div className="flex items-center gap-2">

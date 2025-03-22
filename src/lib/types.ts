@@ -33,6 +33,18 @@ export interface Frequency {
   activityStatus: ActivityStatus;
   lastActivity: Date | null;
   distance?: number; // Distance from user in km (calculated dynamically)
+  isFavorite?: boolean; // New property to track favorite status
+}
+
+export interface NewFrequencyInput {
+  frequency: string;
+  name: string;
+  description: string;
+  category: Exclude<FrequencyCategory, 'All'>;
+  location: {
+    name: string;
+    coordinates: Coordinates;
+  };
 }
 
 export interface UserLocation {

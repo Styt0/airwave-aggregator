@@ -1,5 +1,5 @@
-
-import { Frequency, ActivityStatus } from './types';
+import { Frequency, ActivityStatus, NewFrequencyInput } from './types';
+import { v4 as uuidv4 } from 'uuid';
 
 // Helper function to generate an ISO date from minutes ago
 const minutesAgo = (minutes: number): Date => {
@@ -221,6 +221,64 @@ export const mockFrequencies: Frequency[] = [
   }
 ];
 
+// Local storage keys
+const FAVORITES_KEY = 'radio-favorites';
+const CUSTOM_FREQUENCIES_KEY = 'radio-custom-frequencies';
+
+// Get favorites from local storage
+export const getFavorites = (): string[] => {
+  const storedFavorites = localStorage.getItem(FAVORITES_KEY);
+  return storedFavorites ? JSON.parse(storedFavorites) : [];
+};
+
+// Save favorites to local storage
+export const saveFavorites = (favoriteIds: string[]): void => {
+  localStorage.setItem(FAVORITES_KEY, JSON.stringify(favoriteIds));
+};
+
+// Toggle a frequency as favorite
+export const toggleFavorite = (id: string): string[] => {
+  const favorites = getFavorites();
+  const index = favorites.indexOf(id);
+  
+  if (index >= 0) {
+    favorites.splice(index, 1);
+  } else {
+    favorites.push(id);
+  }
+  
+  saveFavorites(favorites);
+  return favorites;
+};
+
+// Get custom frequencies from local storage
+export const getCustomFrequencies = (): Frequency[] => {
+  const stored = localStorage.getItem(CUSTOM_FREQUENCIES_KEY);
+  return stored ? JSON.parse(stored) : [];
+};
+
+// Save custom frequencies to local storage
+export const saveCustomFrequencies = (frequencies: Frequency[]): void => {
+  localStorage.setItem(CUSTOM_FREQUENCIES_KEY, JSON.stringify(frequencies));
+};
+
+// Add a new custom frequency
+export const addFrequency = (data: NewFrequencyInput): Frequency => {
+  const customFrequencies = getCustomFrequencies();
+  
+  const newFrequency: Frequency = {
+    id: uuidv4(),
+    ...data,
+    activityStatus: 'none',
+    lastActivity: null
+  };
+  
+  customFrequencies.push(newFrequency);
+  saveCustomFrequencies(customFrequencies);
+  
+  return newFrequency;
+};
+
 // Calculate distance between two points using Haversine formula
 export const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
   const R = 6371; // Radius of the earth in km
@@ -270,4 +328,15 @@ export const updateActivityStatus = (frequencies: Frequency[]): Frequency[] => {
     ...freq,
     activityStatus: getActivityStatus(freq.lastActivity)
   }));
+};
+
+// Get all frequencies including custom ones
+export const getAllFrequencies = (): Frequency[] => {
+  return [...mockFrequencies, ...getCustomFrequencies()];
+};
+
+// Get favorite frequencies
+export const getFavoriteFrequencies = (frequencies: Frequency[]): Frequency[] => {
+  const favoriteIds = getFavorites();
+  return frequencies.filter(freq => favoriteIds.includes(freq.id));
 };
