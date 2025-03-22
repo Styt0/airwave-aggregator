@@ -49,7 +49,7 @@ export const FrequencyItem: React.FC<FrequencyItemProps> = ({
             e.stopPropagation();
             onToggleFavorite();
           }}
-          className="absolute top-3 right-3 z-10"
+          className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center"
           aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
         >
           <Star 
@@ -64,7 +64,7 @@ export const FrequencyItem: React.FC<FrequencyItemProps> = ({
       )}
       
       <div className="flex justify-between items-start">
-        <div>
+        <div className="pr-8">
           <div className="flex items-center gap-2">
             <h3 className="font-medium">{frequency.name}</h3>
             {isNew && (

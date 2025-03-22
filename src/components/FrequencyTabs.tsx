@@ -3,9 +3,10 @@ import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FrequencyTable } from './FrequencyTable';
 import { FavoriteFrequencies } from './FavoriteFrequencies';
+import { MapView } from './MapView';
 import { AddFrequencyDialog } from './AddFrequencyDialog';
 import { Frequency, NewFrequencyInput } from '@/lib/types';
-import { Star } from 'lucide-react';
+import { Map, Star } from 'lucide-react';
 
 interface FrequencyTabsProps {
   frequencies: Frequency[];
@@ -56,6 +57,10 @@ export const FrequencyTabs: React.FC<FrequencyTabsProps> = ({
               </span>
             )}
           </TabsTrigger>
+          <TabsTrigger value="map" className="flex items-center gap-1.5">
+            <Map className="h-3.5 w-3.5" />
+            <span>Map View</span>
+          </TabsTrigger>
         </TabsList>
         
         <AddFrequencyDialog 
@@ -77,6 +82,18 @@ export const FrequencyTabs: React.FC<FrequencyTabsProps> = ({
         <FavoriteFrequencies 
           favorites={favorites}
           onRemoveFavorite={(id) => onToggleFavorite(id)}
+        />
+      </TabsContent>
+
+      <TabsContent value="map" className="mt-0">
+        <MapView 
+          frequencies={frequencies}
+          userCoordinates={userCoordinates}
+          onSelectFrequency={(id) => {
+            if (!favoriteIds.has(id)) {
+              onToggleFavorite(id);
+            }
+          }}
         />
       </TabsContent>
     </Tabs>
