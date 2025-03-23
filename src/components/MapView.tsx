@@ -6,9 +6,8 @@ import { Frequency, FrequencyCategory } from '@/lib/types';
 import { categoryColors } from '@/lib/utils';
 import { Map, MapPin } from 'lucide-react';
 
-// You'll need to replace this with your own Mapbox token
-// For a production app, this should be stored securely
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGVtby1hY2NvdW50IiwiYSI6ImNsMjl4ZWt4bTAwdGkzZG5wYjJ0aXg1NW0ifQ.Dq8j2hFbhZIzxcKdYmQP3Q';
+// Mapbox token provided by user
+const MAPBOX_TOKEN = 'pk.eyJ1Ijoic3R5dG8iLCJhIjoiY204a2VtOXhkMHhqZTJrcXI5bjlyZjhsNSJ9.xeo91AG44Yz9q-zp7LEMrg';
 
 interface MapViewProps {
   frequencies: Frequency[];
@@ -52,7 +51,7 @@ export const MapView: React.FC<MapViewProps> = ({
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v11',
+      style: 'mapbox://styles/mapbox/dark-v11', // Changed to dark style for NASA command hub look
       center: initialCoordinates as [number, number],
       zoom: userCoordinates ? 9 : 6,
     });
@@ -91,10 +90,10 @@ export const MapView: React.FC<MapViewProps> = ({
         .setLngLat([longitude, latitude])
         .setPopup(new mapboxgl.Popup({ offset: 25 })
           .setHTML(`
-            <div class="p-2">
+            <div class="p-2 bg-black bg-opacity-80 text-cyan-400 border border-cyan-500 rounded">
               <h3 class="font-bold">${freq.name}</h3>
               <p class="text-sm">${freq.frequency} MHz</p>
-              <p class="text-xs text-gray-500">${freq.category}</p>
+              <p class="text-xs text-cyan-300">${freq.category}</p>
             </div>
           `))
         .addTo(map.current);
@@ -119,12 +118,13 @@ export const MapView: React.FC<MapViewProps> = ({
 
     // Create a custom element for the user marker
     const el = document.createElement('div');
-    el.className = 'flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 border-2 border-white shadow-md pulse-animation';
+    el.className = 'flex items-center justify-center w-8 h-8 rounded-full bg-cyan-500 border-2 border-white shadow-lg pulse-animation';
+    el.innerHTML = '<div class="w-4 h-4 bg-cyan-300 rounded-full animate-ping"></div>';
     
     userMarker.current = new mapboxgl.Marker({ element: el })
       .setLngLat([userCoordinates.longitude, userCoordinates.latitude])
       .setPopup(new mapboxgl.Popup({ offset: 25 })
-        .setHTML('<div class="p-2"><strong>Your Location</strong></div>'))
+        .setHTML('<div class="p-2 bg-black bg-opacity-80 text-cyan-400 border border-cyan-500 rounded"><strong>Your Location</strong></div>'))
       .addTo(map.current);
     
     // Center the map on user's location
@@ -154,30 +154,11 @@ export const MapView: React.FC<MapViewProps> = ({
         ref={mapContainer} 
         className="absolute inset-0 bg-muted" 
       />
-      {!MAPBOX_TOKEN.startsWith('pk.eyJ1IjoiZGVtby1hY2NvdW50') && (
-        <div className="absolute bottom-2 left-2 z-10 text-xs text-muted-foreground bg-background/80 px-2 py-1 rounded-md">
-          Map data provided by Mapbox
-        </div>
-      )}
-      {MAPBOX_TOKEN.startsWith('pk.eyJ1IjoiZGVtby1hY2NvdW50') && (
-        <div className="absolute inset-0 flex items-center justify-center bg-muted/80 z-10">
-          <div className="bg-background p-4 rounded-lg shadow-lg max-w-md">
-            <h3 className="text-lg font-semibold mb-2">Mapbox API Key Required</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              This demo is using a placeholder Mapbox token. For a working map, replace the token in MapView.tsx with your own Mapbox access token.
-            </p>
-            <a 
-              href="https://account.mapbox.com/auth/signup/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-sm text-primary hover:underline"
-            >
-              Get a free Mapbox account →
-            </a>
-          </div>
-        </div>
-      )}
+      <div className="absolute bottom-2 left-2 z-10 text-xs text-cyan-300 bg-black/80 px-2 py-1 rounded-md">
+        Map data provided by Mapbox
+      </div>
     </div>
   );
 };
+
 
