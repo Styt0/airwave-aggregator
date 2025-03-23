@@ -98,11 +98,11 @@ export const FrequencyItem: React.FC<FrequencyItemProps> = ({
           </span>
         </div>
         
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 bg-background/50 px-2 py-1 rounded-full shadow-sm">
+          <ActivityIndicator status={frequency.activityStatus} />
+          <span className="text-xs text-muted-foreground ml-0.5">
             {formatLastActivity(frequency.lastActivity)}
           </span>
-          <ActivityIndicator status={frequency.activityStatus} />
         </div>
       </div>
       

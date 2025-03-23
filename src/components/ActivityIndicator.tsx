@@ -25,6 +25,16 @@ export const ActivityIndicator: React.FC<ActivityIndicatorProps> = ({
     }
   };
 
+  const getBackgroundColor = () => {
+    switch (status) {
+      case 'green': return 'bg-activity-green/20';
+      case 'yellow': return 'bg-activity-yellow/20';
+      case 'orange': return 'bg-activity-orange/20';
+      case 'red': return 'bg-activity-red/20';
+      default: return 'bg-gray-200/20';
+    }
+  };
+
   const getStatusLabel = () => {
     switch (status) {
       case 'green': return 'Active (< 5m)';
@@ -42,13 +52,23 @@ export const ActivityIndicator: React.FC<ActivityIndicatorProps> = ({
 
   return (
     <div className={cn('flex items-center gap-1.5', className)}>
-      <Signal 
-        className={cn(
-          'w-4 h-4',
-          getStatusColor(),
-          getAnimation()
-        )} 
-      />
+      <div className={cn(
+        'rounded-full p-1.5',
+        getBackgroundColor(),
+        status !== 'none' ? 'ring-1 ring-opacity-50' : '',
+        status === 'green' ? 'ring-activity-green' : '',
+        status === 'yellow' ? 'ring-activity-yellow' : '',
+        status === 'orange' ? 'ring-activity-orange' : '',
+        status === 'red' ? 'ring-activity-red' : '',
+      )}>
+        <Signal 
+          className={cn(
+            'w-4 h-4',
+            getStatusColor(),
+            getAnimation()
+          )} 
+        />
+      </div>
       {showLabel && (
         <span className={cn('text-xs font-medium', getStatusColor())}>
           {getStatusLabel()}
