@@ -14,6 +14,12 @@ export const categoryColors: Record<FrequencyCategory, string> = {
   'Repeaters': 'bg-emerald-500',
   'CW': 'bg-amber-500',
   'HF': 'bg-indigo-500',
+  'Satellite': 'bg-blue-400',
+  'Space': 'bg-purple-600',
+  'Military': 'bg-red-700',
+  'Weather': 'bg-sky-400',
+  'Maritime': 'bg-blue-600',
+  'Digital': 'bg-teal-500',
   'All': 'bg-slate-500'
 }
 

@@ -35,14 +35,18 @@ import {
 import { Plus } from 'lucide-react';
 
 const frequencyCategories: Exclude<FrequencyCategory, 'All'>[] = [
-  'Airband', 'VHF', 'UHF', 'Repeaters', 'CW', 'HF'
+  'Airband', 'VHF', 'UHF', 'Repeaters', 'CW', 'HF', 'Satellite', 
+  'Space', 'Military', 'Weather', 'Maritime', 'Digital'
 ];
 
 const formSchema = z.object({
   frequency: z.string().min(1, "Frequency is required"),
   name: z.string().min(1, "Name is required"),
   description: z.string().optional(),
-  category: z.enum(['Airband', 'VHF', 'UHF', 'Repeaters', 'CW', 'HF']),
+  category: z.enum([
+    'Airband', 'VHF', 'UHF', 'Repeaters', 'CW', 'HF', 'Satellite', 
+    'Space', 'Military', 'Weather', 'Maritime', 'Digital'
+  ]),
   locationName: z.string().min(1, "Location name is required"),
 });
 

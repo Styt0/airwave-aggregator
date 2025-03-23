@@ -218,6 +218,201 @@ export const mockFrequencies: Frequency[] = [
     },
     lastActivity: minutesAgo(6),
     activityStatus: 'yellow'
+  },
+  {
+    id: '16',
+    frequency: '145.800',
+    name: 'ISS Downlink Voice',
+    description: 'International Space Station voice communications downlink',
+    category: 'Space',
+    location: {
+      name: 'Low Earth Orbit',
+      coordinates: { latitude: 0, longitude: 0 }
+    },
+    lastActivity: minutesAgo(3),
+    activityStatus: 'green'
+  },
+  {
+    id: '17',
+    frequency: '437.800',
+    name: 'ISS Packet Radio',
+    description: 'ISS APRS Packet Radio System',
+    category: 'Space',
+    location: {
+      name: 'Low Earth Orbit',
+      coordinates: { latitude: 0, longitude: 0 }
+    },
+    lastActivity: minutesAgo(17),
+    activityStatus: 'orange'
+  },
+  {
+    id: '18',
+    frequency: '145.825',
+    name: 'ISS Digipeater',
+    description: 'ISS Digital Repeater for APRS',
+    category: 'Space',
+    location: {
+      name: 'Low Earth Orbit',
+      coordinates: { latitude: 0, longitude: 0 }
+    },
+    lastActivity: minutesAgo(8),
+    activityStatus: 'yellow'
+  },
+  {
+    id: '19',
+    frequency: '137.100',
+    name: 'NOAA-19 APT',
+    description: 'NOAA Weather Satellite Automatic Picture Transmission',
+    category: 'Satellite',
+    location: {
+      name: 'Polar Orbit',
+      coordinates: { latitude: 0, longitude: 0 }
+    },
+    lastActivity: minutesAgo(45),
+    activityStatus: 'red'
+  },
+  {
+    id: '20',
+    frequency: '137.620',
+    name: 'METEOR-M2 LRPT',
+    description: 'Russian Meteor Weather Satellite',
+    category: 'Satellite',
+    location: {
+      name: 'Polar Orbit',
+      coordinates: { latitude: 0, longitude: 0 }
+    },
+    lastActivity: minutesAgo(2),
+    activityStatus: 'green'
+  },
+  {
+    id: '21',
+    frequency: '435.270',
+    name: 'AMSAT OSCAR-7',
+    description: 'One of the oldest operational amateur radio satellites',
+    category: 'Satellite',
+    location: {
+      name: 'Polar Orbit',
+      coordinates: { latitude: 0, longitude: 0 }
+    },
+    lastActivity: minutesAgo(30),
+    activityStatus: 'orange'
+  },
+  {
+    id: '22',
+    frequency: '162.400',
+    name: 'NOAA Weather Radio',
+    description: 'National weather service broadcast',
+    category: 'Weather',
+    location: {
+      name: 'National',
+      coordinates: { latitude: 50.8503, longitude: 4.3517 }
+    },
+    lastActivity: minutesAgo(5),
+    activityStatus: 'green'
+  },
+  {
+    id: '23',
+    frequency: '162.425',
+    name: 'NOAA Weather Alt',
+    description: 'Alternative NOAA weather frequency',
+    category: 'Weather',
+    location: {
+      name: 'National',
+      coordinates: { latitude: 50.8503, longitude: 4.3517 }
+    },
+    lastActivity: minutesAgo(9),
+    activityStatus: 'yellow'
+  },
+  {
+    id: '24',
+    frequency: '243.000',
+    name: 'Military Air Distress',
+    description: 'Military aircraft emergency frequency',
+    category: 'Military',
+    location: {
+      name: 'National Airspace',
+      coordinates: { latitude: 50.8503, longitude: 4.3517 }
+    },
+    lastActivity: null,
+    activityStatus: 'none'
+  },
+  {
+    id: '25',
+    frequency: '255.400',
+    name: 'NATO Common',
+    description: 'Common NATO military air operations',
+    category: 'Military',
+    location: {
+      name: 'European Airspace',
+      coordinates: { latitude: 50.8503, longitude: 4.3517 }
+    },
+    lastActivity: minutesAgo(25),
+    activityStatus: 'orange'
+  },
+  {
+    id: '26',
+    frequency: '156.800',
+    name: 'Marine Channel 16',
+    description: 'International maritime distress and calling frequency',
+    category: 'Maritime',
+    location: {
+      name: 'Coastal Areas',
+      coordinates: { latitude: 51.2194, longitude: 2.9282 }
+    },
+    lastActivity: minutesAgo(4),
+    activityStatus: 'green'
+  },
+  {
+    id: '27',
+    frequency: '156.650',
+    name: 'Marine Channel 13',
+    description: 'Bridge-to-bridge navigation',
+    category: 'Maritime',
+    location: {
+      name: 'Coastal Areas',
+      coordinates: { latitude: 51.2194, longitude: 2.9282 }
+    },
+    lastActivity: minutesAgo(18),
+    activityStatus: 'orange'
+  },
+  {
+    id: '28',
+    frequency: '14.070',
+    name: 'FT8 20m',
+    description: 'Popular FT8 digital mode frequency on 20m band',
+    category: 'Digital',
+    location: {
+      name: 'International',
+      coordinates: { latitude: 50.8503, longitude: 4.3517 }
+    },
+    lastActivity: minutesAgo(1),
+    activityStatus: 'green'
+  },
+  {
+    id: '29',
+    frequency: '7.074',
+    name: 'FT8 40m',
+    description: 'FT8 digital mode frequency on 40m band',
+    category: 'Digital',
+    location: {
+      name: 'International',
+      coordinates: { latitude: 50.8503, longitude: 4.3517 }
+    },
+    lastActivity: minutesAgo(7),
+    activityStatus: 'yellow'
+  },
+  {
+    id: '30',
+    frequency: '10.136',
+    name: 'WSPR 30m',
+    description: 'Weak Signal Propagation Reporter Network',
+    category: 'Digital',
+    location: {
+      name: 'International',
+      coordinates: { latitude: 50.8503, longitude: 4.3517 }
+    },
+    lastActivity: minutesAgo(15),
+    activityStatus: 'orange'
   }
 ];
 

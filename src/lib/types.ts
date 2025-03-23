@@ -5,7 +5,13 @@ export type FrequencyCategory =
   | 'UHF' 
   | 'Repeaters' 
   | 'CW' 
-  | 'HF' 
+  | 'HF'
+  | 'Satellite'
+  | 'Space'
+  | 'Military'
+  | 'Weather'
+  | 'Maritime'
+  | 'Digital'
   | 'All';
 
 export type ActivityStatus = 
