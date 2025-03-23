@@ -9,8 +9,15 @@ import {
   CircleDot, 
   Globe, 
   Layers,
-  Building2 
+  Building2,
+  Satellite,
+  CloudLightning,
+  Ship,
+  Cpu,
+  Plane,
+  BarChart3
 } from 'lucide-react';
+import { ScrollArea } from './ui/scroll-area';
 
 interface CategoryFilterProps {
   selectedCategory: FrequencyCategory;
@@ -34,18 +41,52 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
     { id: 'Repeaters', name: 'Repeaters', icon: <Radio className="w-4 h-4" /> },
     { id: 'CW', name: 'CW', icon: <CircleDot className="w-4 h-4" /> },
     { id: 'HF', name: 'HF', icon: <Globe className="w-4 h-4" /> },
+    { id: 'Satellite', name: 'Satellite', icon: <Satellite className="w-4 h-4" /> },
+    { id: 'Space', name: 'Space', icon: <Globe className="w-4 h-4" /> },
+    { id: 'Military', name: 'Military', icon: <Plane className="w-4 h-4" /> },
+    { id: 'Weather', name: 'Weather', icon: <CloudLightning className="w-4 h-4" /> },
+    { id: 'Maritime', name: 'Maritime', icon: <Ship className="w-4 h-4" /> },
+    { id: 'Digital', name: 'Digital', icon: <Cpu className="w-4 h-4" /> },
+    { id: 'Amateur', name: 'Amateur', icon: <Radio className="w-4 h-4" /> },
+    { id: 'VOLMET', name: 'VOLMET', icon: <CloudLightning className="w-4 h-4" /> },
+    { id: 'Utility', name: 'Utility', icon: <BarChart3 className="w-4 h-4" /> },
   ];
 
+  // Split categories into two rows for better display
+  const firstRowCategories = categories.slice(0, 9);
+  const secondRowCategories = categories.slice(9);
+
   return (
-    <div className="w-full overflow-x-auto pb-2 px-1 no-scrollbar">
-      <div className="flex space-x-2 min-w-max">
-        {categories.map((category) => (
+    <div className="w-full px-1 space-y-2">
+      {/* First row of categories */}
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-2">
+        {firstRowCategories.map((category) => (
           <button
             key={category.id}
             onClick={() => onCategoryChange(category.id)}
             className={cn(
-              "flex items-center space-x-1 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200",
-              "backdrop-blur-sm border",
+              "flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200",
+              "backdrop-blur-sm border w-full",
+              selectedCategory === category.id
+                ? "bg-primary/10 border-primary/30 text-primary shadow-sm"
+                : "bg-card/60 border-border/50 text-muted-foreground hover:bg-card/80 hover:border-border/80 hover:text-foreground"
+            )}
+          >
+            {category.icon}
+            <span>{category.name}</span>
+          </button>
+        ))}
+      </div>
+      
+      {/* Second row of categories */}
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
+        {secondRowCategories.map((category) => (
+          <button
+            key={category.id}
+            onClick={() => onCategoryChange(category.id)}
+            className={cn(
+              "flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200",
+              "backdrop-blur-sm border w-full",
               selectedCategory === category.id
                 ? "bg-primary/10 border-primary/30 text-primary shadow-sm"
                 : "bg-card/60 border-border/50 text-muted-foreground hover:bg-card/80 hover:border-border/80 hover:text-foreground"
