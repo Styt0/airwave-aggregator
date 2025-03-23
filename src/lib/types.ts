@@ -12,6 +12,7 @@ export type FrequencyCategory =
   | 'Weather'
   | 'Maritime'
   | 'Digital'
+  | 'Amateur'  // New category for amateur radio
   | 'All';
 
 export type ActivityStatus = 
@@ -40,6 +41,10 @@ export interface Frequency {
   lastActivity: Date | null;
   distance?: number; // Distance from user in km (calculated dynamically)
   isFavorite?: boolean; // New property to track favorite status
+  offset?: string;      // For repeaters with offset
+  tone?: string;        // CTCSS/DCS tone
+  mode?: string;        // FM, DMR, D-STAR, etc.
+  source?: string;      // Source of the frequency data
 }
 
 export interface NewFrequencyInput {
@@ -51,6 +56,10 @@ export interface NewFrequencyInput {
     name: string;
     coordinates: Coordinates;
   };
+  offset?: string;
+  tone?: string;
+  mode?: string;
+  source?: string;
 }
 
 export interface UserLocation {

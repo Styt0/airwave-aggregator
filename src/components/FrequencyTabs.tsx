@@ -41,7 +41,11 @@ export const FrequencyTabs: React.FC<FrequencyTabsProps> = ({
       location: {
         name: values.locationName,
         coordinates: coordinates || { latitude: 50.8503, longitude: 4.3517 } // Default to Brussels if no coordinates
-      }
+      },
+      offset: values.offset,
+      tone: values.tone,
+      mode: values.mode,
+      source: values.source || 'User'
     });
   };
 
@@ -67,9 +71,21 @@ export const FrequencyTabs: React.FC<FrequencyTabsProps> = ({
       case 'Weather': return <CloudLightning className="h-3.5 w-3.5" />;
       case 'Maritime': return <Ship className="h-3.5 w-3.5" />;
       case 'Digital': return <Cpu className="h-3.5 w-3.5" />;
+      case 'Amateur': return <Radio className="h-3.5 w-3.5" />;
       default: return null;
     }
   };
+
+  // Count frequencies by category
+  const getCategoryCounts = () => {
+    const counts: Record<string, number> = {};
+    frequencies.forEach(freq => {
+      counts[freq.category] = (counts[freq.category] || 0) + 1;
+    });
+    return counts;
+  };
+  
+  const categoryCounts = getCategoryCounts();
 
   return (
     <Tabs value={activeMainTab} onValueChange={setActiveMainTab} className="w-full">
@@ -111,7 +127,12 @@ export const FrequencyTabs: React.FC<FrequencyTabsProps> = ({
                 }`}
               >
                 {getCategoryIcon(category)}
-                {category}
+                <span>{category}</span>
+                {category !== 'All' && categoryCounts[category] && (
+                  <span className="ml-1.5 h-4 min-w-4 px-1 inline-flex items-center justify-center rounded-full bg-muted-foreground/20 text-xs">
+                    {categoryCounts[category]}
+                  </span>
+                )}
               </button>
             ))}
           </TabsList>
