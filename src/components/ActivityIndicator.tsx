@@ -2,7 +2,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { ActivityStatus } from '@/lib/types';
-import { Signal } from 'lucide-react';
+import { Signal, Radio } from 'lucide-react';
 
 interface ActivityIndicatorProps {
   status: ActivityStatus;
@@ -17,21 +17,31 @@ export const ActivityIndicator: React.FC<ActivityIndicatorProps> = ({
 }) => {
   const getStatusColor = () => {
     switch (status) {
-      case 'green': return 'text-activity-green';
-      case 'yellow': return 'text-activity-yellow';
-      case 'orange': return 'text-activity-orange';
-      case 'red': return 'text-activity-red';
+      case 'green': return 'text-[#0ceb70]';
+      case 'yellow': return 'text-[#facc15]';
+      case 'orange': return 'text-[#fb923c]';
+      case 'red': return 'text-[#f87171]';
       default: return 'text-gray-300';
     }
   };
 
   const getBackgroundColor = () => {
     switch (status) {
-      case 'green': return 'bg-activity-green/20';
-      case 'yellow': return 'bg-activity-yellow/20';
-      case 'orange': return 'bg-activity-orange/20';
-      case 'red': return 'bg-activity-red/20';
+      case 'green': return 'bg-[#0ceb70]/20';
+      case 'yellow': return 'bg-[#facc15]/20';
+      case 'orange': return 'bg-[#fb923c]/20';
+      case 'red': return 'bg-[#f87171]/20';
       default: return 'bg-gray-200/20';
+    }
+  };
+
+  const getGlowEffect = () => {
+    switch (status) {
+      case 'green': return 'shadow-[0_0_8px_rgba(12,235,112,0.6)]';
+      case 'yellow': return 'shadow-[0_0_8px_rgba(250,204,21,0.5)]';
+      case 'orange': return 'shadow-[0_0_8px_rgba(251,146,60,0.5)]';
+      case 'red': return 'shadow-[0_0_8px_rgba(248,113,113,0.5)]';
+      default: return '';
     }
   };
 
@@ -55,13 +65,15 @@ export const ActivityIndicator: React.FC<ActivityIndicatorProps> = ({
       <div className={cn(
         'rounded-full p-1.5',
         getBackgroundColor(),
-        status !== 'none' ? 'ring-1 ring-opacity-50' : '',
-        status === 'green' ? 'ring-activity-green' : '',
-        status === 'yellow' ? 'ring-activity-yellow' : '',
-        status === 'orange' ? 'ring-activity-orange' : '',
-        status === 'red' ? 'ring-activity-red' : '',
+        getGlowEffect(),
+        status !== 'none' ? 'ring-1 ring-opacity-70' : '',
+        status === 'green' ? 'ring-[#0ceb70]' : '',
+        status === 'yellow' ? 'ring-[#facc15]' : '',
+        status === 'orange' ? 'ring-[#fb923c]' : '',
+        status === 'red' ? 'ring-[#f87171]' : '',
+        status === 'green' ? 'radar-ping' : ''
       )}>
-        <Signal 
+        <Radio 
           className={cn(
             'w-4 h-4',
             getStatusColor(),

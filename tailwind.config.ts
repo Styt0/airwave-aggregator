@@ -64,7 +64,7 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
         activity: {
-          green: "#4ade80",
+          green: "#0ceb70",
           yellow: "#facc15",
           orange: "#fb923c",
           red: "#f87171",
