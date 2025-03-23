@@ -63,7 +63,7 @@ export const ActivityIndicator: React.FC<ActivityIndicatorProps> = ({
   return (
     <div className={cn('flex items-center gap-1.5', className)}>
       <div className={cn(
-        'rounded-full p-1.5',
+        'relative rounded-full p-1.5',
         getBackgroundColor(),
         getGlowEffect(),
         status !== 'none' ? 'ring-1 ring-opacity-70' : '',
@@ -75,7 +75,7 @@ export const ActivityIndicator: React.FC<ActivityIndicatorProps> = ({
       )}>
         <Radio 
           className={cn(
-            'w-4 h-4',
+            'w-4 h-4 relative z-10',
             getStatusColor(),
             getAnimation()
           )} 

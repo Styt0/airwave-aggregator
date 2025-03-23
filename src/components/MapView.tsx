@@ -118,8 +118,12 @@ export const MapView: React.FC<MapViewProps> = ({
 
     // Create a custom element for the user marker
     const el = document.createElement('div');
-    el.className = 'flex items-center justify-center w-8 h-8 rounded-full bg-cyan-500 border-2 border-white shadow-lg pulse-animation';
-    el.innerHTML = '<div class="w-4 h-4 bg-cyan-300 rounded-full animate-ping"></div>';
+    el.className = 'relative flex items-center justify-center w-8 h-8 rounded-full bg-cyan-500 border-2 border-white shadow-lg radar-ping';
+    
+    // Adding a centered inner dot
+    const innerDot = document.createElement('div');
+    innerDot.className = 'absolute w-4 h-4 bg-cyan-300 rounded-full';
+    el.appendChild(innerDot);
     
     userMarker.current = new mapboxgl.Marker({ element: el })
       .setLngLat([userCoordinates.longitude, userCoordinates.latitude])
@@ -160,5 +164,3 @@ export const MapView: React.FC<MapViewProps> = ({
     </div>
   );
 };
-
-
