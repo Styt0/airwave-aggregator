@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { CategoryFilter } from '@/components/CategoryFilter';
 import { FrequencyTabs } from '@/components/FrequencyTabs';
 import { LocationSelector } from '@/components/LocationSelector';
@@ -14,6 +14,8 @@ import {
   addFrequency
 } from '@/lib/data';
 import { useToast } from '@/components/ui/use-toast';
+import { RadioTower, Waveform } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const { toast } = useToast();
@@ -29,20 +31,15 @@ const Index = () => {
     error: null,
   });
 
-  // Initialize frequencies
   useEffect(() => {
-    // Simulate loading data from an API
     const loadData = async () => {
       setLoading(true);
       try {
-        // Add a small delay to simulate API fetch
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // Get all frequencies including custom ones
         const allFreqs = getAllFrequencies();
         setFrequencies(allFreqs);
         
-        // Load favorites from local storage
         const favIds = getFavorites();
         setFavoriteIds(favIds);
         setFavoriteFrequencies(getFavoriteFrequencies(allFreqs));
@@ -60,20 +57,17 @@ const Index = () => {
     
     loadData();
     
-    // Set up timer to periodically update activity status
     const intervalId = setInterval(() => {
       setFrequencies(prevFreqs => {
         const updated = updateActivityStatus(prevFreqs);
-        // Also update favorites when activity status changes
         setFavoriteFrequencies(getFavoriteFrequencies(updated));
         return updated;
       });
-    }, 15000); // Every 15 seconds
+    }, 15000);
     
     return () => clearInterval(intervalId);
   }, [toast]);
 
-  // Listen for manual location setting
   useEffect(() => {
     const handleManualLocationSet = (e: CustomEvent) => {
       const { latitude, longitude } = e.detail;
@@ -92,7 +86,6 @@ const Index = () => {
     };
   }, []);
 
-  // Filter frequencies when category changes
   useEffect(() => {
     if (!frequencies.length) return;
     
@@ -100,15 +93,12 @@ const Index = () => {
     setFilteredFrequencies(filtered);
   }, [selectedCategory, frequencies]);
 
-  // Handle favorites changes
   const handleToggleFavorite = (id: string) => {
     const updatedFavorites = toggleFavorite(id);
     setFavoriteIds(updatedFavorites);
     
-    // Update the favorite frequencies list
     setFavoriteFrequencies(getFavoriteFrequencies(frequencies));
     
-    // Show toast notification
     const freq = frequencies.find(f => f.id === id);
     if (freq) {
       const isFavorite = updatedFavorites.includes(id);
@@ -119,14 +109,11 @@ const Index = () => {
     }
   };
 
-  // Handle adding a new frequency
   const handleAddFrequency = (data: NewFrequencyInput) => {
     const newFreq = addFrequency(data);
     
-    // Update the frequencies list with the new frequency
     setFrequencies(prev => {
       const updated = [...prev, newFreq];
-      // Also update filtered frequencies if needed
       setFilteredFrequencies(getFrequenciesByCategory(updated, selectedCategory));
       return updated;
     });
@@ -198,8 +185,15 @@ const Index = () => {
     <main className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 md:px-8">
         <div className="flex flex-col space-y-6">
-          {/* Header */}
           <header className="text-center">
+            <div className="flex justify-end mb-2">
+              <Link to="/signal-identification">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Waveform className="h-4 w-4" />
+                  Signal Identification
+                </Button>
+              </Link>
+            </div>
             <h1 className="text-3xl font-semibold tracking-tight md:text-4xl animate-fade-in">
               Radio Frequency Database
             </h1>
@@ -208,7 +202,6 @@ const Index = () => {
             </p>
           </header>
           
-          {/* Location Selector */}
           <div className="w-full">
             <LocationSelector 
               userLocation={userLocation}
@@ -216,7 +209,6 @@ const Index = () => {
             />
           </div>
           
-          {/* Category Filter */}
           <div className="w-full">
             <CategoryFilter 
               selectedCategory={selectedCategory}
@@ -224,7 +216,6 @@ const Index = () => {
             />
           </div>
           
-          {/* Frequencies (All & Favorites) */}
           <div className="w-full">
             <FrequencyTabs
               frequencies={filteredFrequencies}

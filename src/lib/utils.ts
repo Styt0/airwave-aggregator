@@ -85,3 +85,136 @@ export const formatOffset = (offset: string | undefined): string => {
   
   return offset;
 }
+
+// Signal Identification Utilities
+export interface SignalType {
+  name: string;
+  description: string;
+  frequencyRange: string;
+  modulation: string;
+  bandwidth: string;
+  image: string;
+  category: string;
+  source: string;
+}
+
+export const commonSignalTypes: SignalType[] = [
+  {
+    name: "AM Voice",
+    description: "Amplitude Modulated voice transmission, commonly used in aviation",
+    frequencyRange: "118-137 MHz",
+    modulation: "AM",
+    bandwidth: "8 kHz",
+    image: "am_voice.png",
+    category: "Airband",
+    source: "ARES Valley"
+  },
+  {
+    name: "FM Voice",
+    description: "Frequency Modulated voice transmission, used in amateur and public service radio",
+    frequencyRange: "144-148 MHz, 420-450 MHz",
+    modulation: "FM",
+    bandwidth: "12.5-25 kHz",
+    image: "fm_voice.png",
+    category: "Amateur",
+    source: "ARES Valley"
+  },
+  {
+    name: "Single Side Band (SSB)",
+    description: "Voice and data transmission using single sideband modulation",
+    frequencyRange: "1.8-30 MHz",
+    modulation: "SSB",
+    bandwidth: "2.4-2.8 kHz",
+    image: "ssb.png",
+    category: "HF",
+    source: "ARES Valley"
+  },
+  {
+    name: "ACARS",
+    description: "Aircraft Communications Addressing and Reporting System",
+    frequencyRange: "129-137 MHz",
+    modulation: "AM-MSK",
+    bandwidth: "2.4 kHz",
+    image: "acars.png",
+    category: "Airband",
+    source: "ARES Valley"
+  },
+  {
+    name: "POCSAG",
+    description: "Post Office Code Standardization Advisory Group - pager protocol",
+    frequencyRange: "138-174 MHz",
+    modulation: "FSK",
+    bandwidth: "12.5 kHz",
+    image: "pocsag.png",
+    category: "Digital",
+    source: "ARES Valley"
+  },
+  {
+    name: "DMR",
+    description: "Digital Mobile Radio standard",
+    frequencyRange: "144-148 MHz, 420-450 MHz",
+    modulation: "4-FSK",
+    bandwidth: "12.5 kHz",
+    image: "dmr.png",
+    category: "Digital",
+    source: "ARES Valley"
+  },
+  {
+    name: "FT8",
+    description: "Digital mode for weak signal communication",
+    frequencyRange: "Multiple HF bands",
+    modulation: "8-FSK",
+    bandwidth: "50 Hz",
+    image: "ft8.png",
+    category: "Digital",
+    source: "ARES Valley"
+  },
+  {
+    name: "APRS",
+    description: "Automatic Packet Reporting System",
+    frequencyRange: "144.39-144.80 MHz",
+    modulation: "AFSK",
+    bandwidth: "16 kHz",
+    image: "aprs.png",
+    category: "APRS",
+    source: "ARES Valley"
+  }
+];
+
+// Function to search for signal types based on frequency or name
+export const findSignalTypesByFrequency = (freq: number): SignalType[] => {
+  return commonSignalTypes.filter(signal => {
+    const rangeText = signal.frequencyRange;
+    const ranges = rangeText.split(',').map(r => r.trim());
+    
+    for (const range of ranges) {
+      if (range.includes('-')) {
+        const [min, max] = range.split('-').map(r => {
+          // Convert to MHz for comparison
+          const value = parseFloat(r.trim());
+          if (r.includes('kHz') || r.includes('KHz')) {
+            return value / 1000; // Convert kHz to MHz
+          }
+          return value;
+        });
+        
+        if (freq >= min && freq <= max) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  });
+};
+
+export const findSignalTypesByName = (searchTerm: string): SignalType[] => {
+  const term = searchTerm.toLowerCase();
+  return commonSignalTypes.filter(
+    signal => 
+      signal.name.toLowerCase().includes(term) || 
+      signal.description.toLowerCase().includes(term) ||
+      signal.modulation.toLowerCase().includes(term) ||
+      signal.category.toLowerCase().includes(term)
+  );
+};
