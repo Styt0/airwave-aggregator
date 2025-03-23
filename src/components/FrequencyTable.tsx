@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Frequency } from '@/lib/types';
 import { FrequencyItem } from './FrequencyItem';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Search, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -31,6 +31,7 @@ export const FrequencyTable: React.FC<FrequencyTableProps> = ({
   const [sortOption, setSortOption] = useState<'distance' | 'activity' | 'frequency'>('distance');
   const [filteredFrequencies, setFilteredFrequencies] = useState<Frequency[]>(frequencies);
   const [showNewIndicator, setShowNewIndicator] = useState<Record<string, boolean>>({});
+  const [displayLimit, setDisplayLimit] = useState(12);
 
   // Filter and sort frequencies
   useEffect(() => {
@@ -102,6 +103,14 @@ export const FrequencyTable: React.FC<FrequencyTableProps> = ({
     }
   };
 
+  const hasMoreToLoad = filteredFrequencies.length > displayLimit;
+
+  const loadMore = () => {
+    setDisplayLimit(prev => prev + 12);
+  };
+
+  const displayedFrequencies = filteredFrequencies.slice(0, displayLimit);
+
   return (
     <div className="w-full animate-fade-in">
       <div className="flex flex-col md:flex-row gap-2 mb-4">
@@ -154,16 +163,31 @@ export const FrequencyTable: React.FC<FrequencyTableProps> = ({
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredFrequencies.map((freq) => (
-            <FrequencyItem 
-              key={freq.id} 
-              frequency={freq} 
-              isNew={showNewIndicator[freq.id]}
-              isFavorite={favorites.has(freq.id)}
-              onToggleFavorite={() => onToggleFavorite(freq.id)}
-            />
-          ))}
+        <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {displayedFrequencies.map((freq) => (
+              <FrequencyItem 
+                key={freq.id} 
+                frequency={freq} 
+                isNew={showNewIndicator[freq.id]}
+                isFavorite={favorites.has(freq.id)}
+                onToggleFavorite={() => onToggleFavorite(freq.id)}
+              />
+            ))}
+          </div>
+          
+          {hasMoreToLoad && (
+            <div className="flex justify-center mt-4">
+              <Button 
+                variant="secondary" 
+                onClick={loadMore}
+                className="flex items-center gap-2 px-8 group"
+              >
+                <span>Show more</span>
+                <ChevronDown className="h-4 w-4 transition-transform group-hover:translate-y-0.5" />
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </div>

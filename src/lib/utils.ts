@@ -20,3 +20,10 @@ export const categoryColors: Record<FrequencyCategory, string> = {
 export const getCategoryColor = (category: FrequencyCategory): string => {
   return categoryColors[category] || 'bg-slate-500';
 }
+
+// Pagination helpers
+export const paginateItems = <T>(items: T[], page: number, itemsPerPage: number): T[] => {
+  const startIndex = (page - 1) * itemsPerPage;
+  return items.slice(startIndex, startIndex + itemsPerPage);
+}
+

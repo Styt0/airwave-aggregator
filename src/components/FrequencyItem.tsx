@@ -76,7 +76,7 @@ export const FrequencyItem: React.FC<FrequencyItemProps> = ({
           <p className="text-sm text-muted-foreground mt-0.5">{frequency.description}</p>
         </div>
         <div className="flex flex-col items-end">
-          <span className="text-lg font-semibold tabular-nums tracking-tight">
+          <span className="text-lg font-semibold tabular-nums tracking-tight pr-8">
             {frequency.frequency}
           </span>
           <span className="text-xs text-muted-foreground uppercase font-medium">
