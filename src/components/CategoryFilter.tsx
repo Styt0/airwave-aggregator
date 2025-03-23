@@ -16,7 +16,10 @@ import {
   Cpu,
   Plane,
   BarChart3,
-  Signal
+  Signal,
+  Network,
+  Radar,
+  PlaneTakeoff
 } from 'lucide-react';
 
 interface CategoryFilterProps {
@@ -51,16 +54,19 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
     { id: 'VOLMET', name: 'VOLMET', icon: <CloudLightning className="w-4 h-4" /> },
     { id: 'Utility', name: 'Utility', icon: <BarChart3 className="w-4 h-4" /> },
     { id: 'APRS', name: 'APRS', icon: <Signal className="w-4 h-4" /> },
+    { id: 'LoRa', name: 'LoRa', icon: <Network className="w-4 h-4" /> },
+    { id: 'Meshtastic', name: 'Meshtastic', icon: <Radar className="w-4 h-4" /> },
+    { id: 'ModeS', name: 'Mode-S', icon: <PlaneTakeoff className="w-4 h-4" /> },
   ];
 
   // Split categories into two rows for better display
-  const firstRowCategories = categories.slice(0, 9);
-  const secondRowCategories = categories.slice(9);
+  const firstRowCategories = categories.slice(0, 11);
+  const secondRowCategories = categories.slice(11);
 
   return (
     <div className="w-full px-1 space-y-2">
       {/* First row of categories */}
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-2">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-11 gap-2">
         {firstRowCategories.map((category) => (
           <button
             key={category.id}
@@ -80,7 +86,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
       </div>
       
       {/* Second row of categories */}
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-2">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-10 gap-2">
         {secondRowCategories.map((category) => (
           <button
             key={category.id}

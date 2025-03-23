@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FrequencyTable } from './FrequencyTable';
@@ -6,7 +5,7 @@ import { FavoriteFrequencies } from './FavoriteFrequencies';
 import { MapView } from './MapView';
 import { AddFrequencyDialog } from './AddFrequencyDialog';
 import { Frequency, NewFrequencyInput, FrequencyCategory } from '@/lib/types';
-import { Map, Star, Radio, Satellite, Globe, CloudLightning, Ship, Cpu, Plane, Radio as RadioIcon, BarChart3, Building2, Signal } from 'lucide-react';
+import { Map, Star, Radio, Satellite, Globe, CloudLightning, Ship, Cpu, Plane, Radio as RadioIcon, BarChart3, Building2, Signal, Network, Radar, PlaneTakeoff } from 'lucide-react';
 
 interface FrequencyTabsProps {
   frequencies: Frequency[];
@@ -80,6 +79,9 @@ export const FrequencyTabs: React.FC<FrequencyTabsProps> = ({
       case 'Utility': return <BarChart3 className="h-3.5 w-3.5" />;
       case 'Airport': return <Building2 className="h-3.5 w-3.5" />;
       case 'APRS': return <Signal className="h-3.5 w-3.5" />;
+      case 'LoRa': return <Network className="h-3.5 w-3.5" />;
+      case 'Meshtastic': return <Radar className="h-3.5 w-3.5" />;
+      case 'ModeS': return <PlaneTakeoff className="h-3.5 w-3.5" />;
       default: return null;
     }
   };

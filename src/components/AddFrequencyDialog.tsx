@@ -37,7 +37,7 @@ import { Plus } from 'lucide-react';
 const frequencyCategories: Exclude<FrequencyCategory, 'All'>[] = [
   'Airband', 'VHF', 'UHF', 'Repeaters', 'CW', 'HF', 'Satellite', 
   'Space', 'Military', 'Weather', 'Maritime', 'Digital', 'Amateur',
-  'VOLMET', 'Utility', 'Airport'
+  'VOLMET', 'Utility', 'Airport', 'APRS', 'LoRa', 'Meshtastic', 'ModeS'
 ];
 
 const formSchema = z.object({
@@ -47,7 +47,7 @@ const formSchema = z.object({
   category: z.enum([
     'Airband', 'VHF', 'UHF', 'Repeaters', 'CW', 'HF', 'Satellite', 
     'Space', 'Military', 'Weather', 'Maritime', 'Digital', 'Amateur',
-    'VOLMET', 'Utility', 'Airport'
+    'VOLMET', 'Utility', 'Airport', 'APRS', 'LoRa', 'Meshtastic', 'ModeS'
   ]),
   locationName: z.string().min(1, "Location name is required"),
   // Airport specific fields
@@ -55,6 +55,18 @@ const formSchema = z.object({
   iataCode: z.string().optional(),
   elevationFt: z.string().optional().transform(val => val ? parseInt(val) : undefined),
   type: z.string().optional(),
+  // LoRa specific fields
+  bandwidth: z.string().optional().transform(val => val ? parseInt(val) : undefined),
+  spreadFactor: z.string().optional().transform(val => val ? parseInt(val) : undefined),
+  codingRate: z.string().optional(),
+  region: z.string().optional(),
+  // Meshtastic specific fields
+  channelName: z.string().optional(),
+  channelNum: z.string().optional().transform(val => val ? parseInt(val) : undefined),
+  // ModeS specific fields
+  aircraft: z.string().optional(),
+  operatorName: z.string().optional(),
+  modeType: z.string().optional(),
 });
 
 interface AddFrequencyDialogProps {
@@ -83,6 +95,15 @@ export const AddFrequencyDialog: React.FC<AddFrequencyDialogProps> = ({
       icaoCode: '',
       iataCode: '',
       type: '',
+      bandwidth: '',
+      spreadFactor: '',
+      codingRate: '',
+      region: '',
+      channelName: '',
+      channelNum: '',
+      aircraft: '',
+      operatorName: '',
+      modeType: '',
     },
   });
 
@@ -270,6 +291,177 @@ export const AddFrequencyDialog: React.FC<AddFrequencyDialogProps> = ({
                     )}
                   />
                 </div>
+              </div>
+            )}
+
+            {/* LoRa-specific fields */}
+            {selectedCategory === 'LoRa' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="bandwidth"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Bandwidth (kHz)</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="125" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="spreadFactor"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Spreading Factor</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="7" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="codingRate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Coding Rate</FormLabel>
+                        <FormControl>
+                          <Input placeholder="4/5" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="region"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Region</FormLabel>
+                        <FormControl>
+                          <Input placeholder="EU868" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Meshtastic-specific fields */}
+            {selectedCategory === 'Meshtastic' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="channelName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Channel Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Default" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="channelNum"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Channel Number</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="1" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="region"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Region</FormLabel>
+                        <FormControl>
+                          <Input placeholder="EU868" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="bandwidth"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Bandwidth (kHz)</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="125" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Mode-S specific fields */}
+            {selectedCategory === 'ModeS' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="aircraft"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Aircraft Type</FormLabel>
+                        <FormControl>
+                          <Input placeholder="F-16" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="modeType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Mode Type</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Mode-S" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <FormField
+                  control={form.control}
+                  name="operatorName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Military Operator</FormLabel>
+                      <FormControl>
+                        <Input placeholder="NATO" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             )}
             

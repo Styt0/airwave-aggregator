@@ -1,4 +1,3 @@
-
 export type FrequencyCategory = 
   | 'Airband' 
   | 'VHF' 
@@ -17,6 +16,9 @@ export type FrequencyCategory =
   | 'Utility'   // For utility stations
   | 'Airport'   // New category for airport frequencies
   | 'APRS'      // For APRS data
+  | 'LoRa'      // For LoRa frequencies
+  | 'Meshtastic' // For Meshtastic frequencies
+  | 'ModeS'     // For Military Mode-S frequencies
   | 'All';
 
 export type ActivityStatus = 
@@ -66,6 +68,15 @@ export interface Frequency {
   comment?: string;     // APRS comment
   path?: string;        // APRS path
   lastHeard?: Date;     // Last heard time for APRS stations
+  bandwidth?: number;   // For LoRa - bandwidth in kHz
+  spreadFactor?: number; // For LoRa - spreading factor
+  codingRate?: string;  // For LoRa - coding rate
+  region?: string;      // For Meshtastic/LoRa - regulatory region
+  channelName?: string; // For Meshtastic - channel name
+  channelNum?: number;  // For Meshtastic - channel number
+  aircraft?: string;    // For Mode-S - aircraft type
+  operatorName?: string; // For Mode-S - military operator name
+  modeType?: string;    // For Mode-S - type (Mode-S, ADS-B, etc.)
 }
 
 export interface NewFrequencyInput {
@@ -95,6 +106,15 @@ export interface NewFrequencyInput {
   altitude?: number;
   comment?: string;
   path?: string;
+  bandwidth?: number;
+  spreadFactor?: number;
+  codingRate?: string;
+  region?: string;
+  channelName?: string;
+  channelNum?: number;
+  aircraft?: string;
+  operatorName?: string;
+  modeType?: string;
 }
 
 export interface UserLocation {

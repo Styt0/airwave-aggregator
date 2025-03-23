@@ -25,6 +25,9 @@ export const categoryColors: Record<FrequencyCategory, string> = {
   'Utility': 'bg-slate-600',
   'Airport': 'bg-sky-700',
   'APRS': 'bg-lime-500',
+  'LoRa': 'bg-fuchsia-600',
+  'Meshtastic': 'bg-orange-500',
+  'ModeS': 'bg-rose-800',
   'All': 'bg-slate-500'
 }
 
