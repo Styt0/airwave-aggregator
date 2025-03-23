@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { CategoryFilter } from '@/components/CategoryFilter';
@@ -14,7 +15,7 @@ import {
   addFrequency
 } from '@/lib/data';
 import { useToast } from '@/components/ui/use-toast';
-import { RadioTower, Waveform } from 'lucide-react';
+import { RadioTower, AudioWaveform } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
@@ -189,7 +190,7 @@ const Index = () => {
             <div className="flex justify-end mb-2">
               <Link to="/signal-identification">
                 <Button variant="outline" className="flex items-center gap-2">
-                  <Waveform className="h-4 w-4" />
+                  <AudioWaveform className="h-4 w-4" />
                   Signal Identification
                 </Button>
               </Link>

@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Radio, RadioTower, ArrowLeft } from 'lucide-react';
+import { Radio, RadioTower, ArrowLeft, AudioWaveform, Database as DatabaseIcon } from 'lucide-react';
 import SignalIdentification from '@/components/SignalIdentification';
 
 const SignalIdentificationPage: React.FC = () => {
@@ -48,7 +48,7 @@ const SignalIdentificationPage: React.FC = () => {
               </div>
               
               <div className="bg-card/80 backdrop-blur-md p-6 rounded-lg border border-border/50 shadow-sm flex flex-col items-center text-center">
-                <Waveform className="h-8 w-8 text-primary mb-3" />
+                <AudioWaveform className="h-8 w-8 text-primary mb-3" />
                 <h3 className="text-lg font-medium">Spectrum Analysis</h3>
                 <p className="text-sm text-muted-foreground mt-2">
                   Identify signals by their spectral characteristics including modulation type and bandwidth.
@@ -56,7 +56,7 @@ const SignalIdentificationPage: React.FC = () => {
               </div>
               
               <div className="bg-card/80 backdrop-blur-md p-6 rounded-lg border border-border/50 shadow-sm flex flex-col items-center text-center">
-                <Database className="h-8 w-8 text-primary mb-3" />
+                <DatabaseIcon className="h-8 w-8 text-primary mb-3" />
                 <h3 className="text-lg font-medium">Signal Database</h3>
                 <p className="text-sm text-muted-foreground mt-2">
                   Access comprehensive information about common radio signals from the ARES Valley database.

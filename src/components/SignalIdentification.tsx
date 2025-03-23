@@ -11,7 +11,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { RadioTower, Waveform, Search, History, Database } from 'lucide-react';
+import { RadioTower, AudioWaveform, Search, History, Database } from 'lucide-react';
 import { SignalType, findSignalTypesByFrequency, findSignalTypesByName } from '@/lib/utils';
 
 const SignalIdentification: React.FC = () => {
@@ -60,7 +60,7 @@ const SignalIdentification: React.FC = () => {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center">
-            <Waveform className="h-5 w-5 mr-2 text-primary" />
+            <AudioWaveform className="h-5 w-5 mr-2 text-primary" />
             Signal Identification
           </CardTitle>
         </div>
