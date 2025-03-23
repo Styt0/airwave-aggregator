@@ -8,8 +8,8 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const categoryColors: Record<FrequencyCategory, string> = {
-  'Airband': 'bg-red-500',
-  'VHF': 'bg-blue-500',
+  'Airband': 'bg-rose-500',
+  'VHF': 'bg-cyan-500',
   'UHF': 'bg-violet-500',
   'Repeaters': 'bg-emerald-500',
   'CW': 'bg-amber-500',

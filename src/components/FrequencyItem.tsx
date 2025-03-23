@@ -56,19 +56,19 @@ export const FrequencyItem: React.FC<FrequencyItemProps> = ({
             className={cn(
               "h-5 w-5 transition-colors",
               isFavorite 
-                ? "fill-yellow-400 text-yellow-400" 
-                : "text-muted-foreground hover:text-yellow-400"
+                ? "fill-amber-400 text-amber-400" 
+                : "text-muted-foreground hover:text-amber-400"
             )} 
           />
         </button>
       )}
       
       <div className="flex justify-between items-start">
-        <div className="pr-8">
+        <div className="pr-10">
           <div className="flex items-center gap-2">
             <h3 className="font-medium">{frequency.name}</h3>
             {isNew && (
-              <span className="px-1.5 py-0.5 bg-primary/10 text-primary text-xs rounded-full font-medium">
+              <span className="px-1.5 py-0.5 bg-cyan-500/10 text-cyan-500 text-xs rounded-full font-medium">
                 New
               </span>
             )}

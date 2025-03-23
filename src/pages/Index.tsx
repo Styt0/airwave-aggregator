@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { CategoryFilter } from '@/components/CategoryFilter';
 import { FrequencyTabs } from '@/components/FrequencyTabs';
@@ -45,9 +46,6 @@ const Index = () => {
         const favIds = getFavorites();
         setFavoriteIds(favIds);
         setFavoriteFrequencies(getFavoriteFrequencies(allFreqs));
-        
-        // Request user location on initial load
-        requestUserLocation();
       } catch (error) {
         console.error('Error loading frequency data:', error);
         toast({
@@ -74,6 +72,25 @@ const Index = () => {
     
     return () => clearInterval(intervalId);
   }, [toast]);
+
+  // Listen for manual location setting
+  useEffect(() => {
+    const handleManualLocationSet = (e: CustomEvent) => {
+      const { latitude, longitude } = e.detail;
+      
+      setUserLocation({
+        coordinates: { latitude, longitude },
+        loading: false,
+        error: null,
+      });
+    };
+    
+    window.addEventListener('manualLocationSet', handleManualLocationSet as EventListener);
+    
+    return () => {
+      window.removeEventListener('manualLocationSet', handleManualLocationSet as EventListener);
+    };
+  }, []);
 
   // Filter frequencies when category changes
   useEffect(() => {
