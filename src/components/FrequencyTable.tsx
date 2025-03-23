@@ -1,193 +1,177 @@
 
-import React, { useState, useEffect } from 'react';
-import { Frequency } from '@/lib/types';
+import React, { useEffect, useState } from 'react';
 import { FrequencyItem } from './FrequencyItem';
-import { Search, SlidersHorizontal, ChevronDown } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { AirportFrequencyItem } from './AirportFrequencyItem';
+import { AprsItem } from './AprsItem';
+import { Frequency } from '@/lib/types';
+import { Radio, Search } from 'lucide-react';
+import { Input } from './ui/input';
 
 interface FrequencyTableProps {
   frequencies: Frequency[];
-  loading?: boolean;
+  loading: boolean;
   onToggleFavorite: (id: string) => void;
   favorites: Set<string>;
 }
 
-export const FrequencyTable: React.FC<FrequencyTableProps> = ({ 
+export const FrequencyTable: React.FC<FrequencyTableProps> = ({
   frequencies,
-  loading = false,
+  loading,
   onToggleFavorite,
   favorites
 }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortOption, setSortOption] = useState<'distance' | 'activity' | 'frequency'>('distance');
-  const [filteredFrequencies, setFilteredFrequencies] = useState<Frequency[]>(frequencies);
-  const [showNewIndicator, setShowNewIndicator] = useState<Record<string, boolean>>({});
-  const [displayLimit, setDisplayLimit] = useState(12);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [displayedFrequencies, setDisplayedFrequencies] = useState<Frequency[]>([]);
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 20;
 
-  // Filter and sort frequencies
+  // Filter frequencies based on search term
   useEffect(() => {
-    let result = [...frequencies];
+    if (searchTerm.trim() === '') {
+      setDisplayedFrequencies(frequencies);
+      return;
+    }
+
+    const normalizedTerm = searchTerm.toLowerCase().trim();
+    const filtered = frequencies.filter(freq => 
+      freq.name.toLowerCase().includes(normalizedTerm) ||
+      freq.description.toLowerCase().includes(normalizedTerm) ||
+      freq.frequency.toLowerCase().includes(normalizedTerm) ||
+      freq.location.name.toLowerCase().includes(normalizedTerm) ||
+      (freq.category && freq.category.toLowerCase().includes(normalizedTerm)) ||
+      (freq.callsign && freq.callsign.toLowerCase().includes(normalizedTerm))
+    );
     
-    // Apply search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        f => f.name.toLowerCase().includes(query) || 
-             f.description.toLowerCase().includes(query) ||
-             f.frequency.includes(query) ||
-             f.location.name.toLowerCase().includes(query)
+    setDisplayedFrequencies(filtered);
+    setPage(1); // Reset to first page when search changes
+  }, [searchTerm, frequencies]);
+
+  // Get current page items
+  const getCurrentPageItems = () => {
+    const startIndex = (page - 1) * itemsPerPage;
+    return displayedFrequencies.slice(startIndex, startIndex + itemsPerPage);
+  };
+
+  // Pagination controls
+  const totalPages = Math.ceil(displayedFrequencies.length / itemsPerPage);
+  
+  const handleNextPage = () => {
+    if (page < totalPages) {
+      setPage(page + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+  
+  const handlePrevPage = () => {
+    if (page > 1) {
+      setPage(page - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const renderFrequencyItem = (freq: Frequency) => {
+    if (freq.category === 'Airport') {
+      return (
+        <AirportFrequencyItem
+          key={freq.id}
+          frequency={freq}
+          isFavorite={favorites.has(freq.id)}
+          onToggleFavorite={() => onToggleFavorite(freq.id)}
+        />
+      );
+    } else if (freq.category === 'APRS') {
+      return (
+        <AprsItem
+          key={freq.id}
+          frequency={freq}
+          isFavorite={favorites.has(freq.id)}
+          onToggleFavorite={() => onToggleFavorite(freq.id)}
+        />
+      );
+    } else {
+      return (
+        <FrequencyItem
+          key={freq.id}
+          frequency={freq}
+          isFavorite={favorites.has(freq.id)}
+          onToggleFavorite={() => onToggleFavorite(freq.id)}
+        />
       );
     }
-    
-    // Apply sorting
-    result = sortFrequencies(result, sortOption);
-    
-    setFilteredFrequencies(result);
-  }, [frequencies, searchQuery, sortOption]);
-
-  // Track new frequencies for highlighting
-  useEffect(() => {
-    const handleNewFrequencies = () => {
-      // Mark any new frequencies
-      const newItems: Record<string, boolean> = {};
-      
-      frequencies.forEach(freq => {
-        if (freq.lastActivity) {
-          const activityTime = new Date(freq.lastActivity).getTime();
-          const now = new Date().getTime();
-          const isRecent = now - activityTime < 60000; // Within the last minute
-          
-          if (isRecent) {
-            newItems[freq.id] = true;
-            
-            // Clear the new indicator after 10 seconds
-            setTimeout(() => {
-              setShowNewIndicator(prev => {
-                const updated = { ...prev };
-                delete updated[freq.id];
-                return updated;
-              });
-            }, 10000);
-          }
-        }
-      });
-      
-      setShowNewIndicator(prev => ({ ...prev, ...newItems }));
-    };
-    
-    handleNewFrequencies();
-  }, [frequencies]);
-
-  const sortFrequencies = (freqs: Frequency[], option: string): Frequency[] => {
-    switch (option) {
-      case 'distance':
-        return [...freqs].sort((a, b) => (a.distance || Infinity) - (b.distance || Infinity));
-      case 'activity':
-        return [...freqs].sort((a, b) => {
-          const activityOrder = { green: 0, yellow: 1, orange: 2, red: 3, none: 4 };
-          return activityOrder[a.activityStatus] - activityOrder[b.activityStatus];
-        });
-      case 'frequency':
-        return [...freqs].sort((a, b) => parseFloat(a.frequency) - parseFloat(b.frequency));
-      default:
-        return freqs;
-    }
   };
 
-  const hasMoreToLoad = filteredFrequencies.length > displayLimit;
+  if (loading) {
+    return (
+      <div className="py-8 text-center">
+        <div className="inline-block animate-spin mr-2">
+          <Radio className="h-5 w-5 text-muted-foreground" />
+        </div>
+        <span className="text-muted-foreground">Loading frequencies...</span>
+      </div>
+    );
+  }
 
-  const loadMore = () => {
-    setDisplayLimit(prev => prev + 12);
-  };
-
-  const displayedFrequencies = filteredFrequencies.slice(0, displayLimit);
+  if (!loading && frequencies.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <Radio className="h-10 w-10 mx-auto text-muted-foreground opacity-20 mb-4" />
+        <h3 className="text-lg font-medium text-foreground mb-1">
+          No frequencies available
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          Try selecting a different category or add a new frequency.
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full animate-fade-in">
-      <div className="flex flex-col md:flex-row gap-2 mb-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search frequencies, locations..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-        
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="flex gap-2 items-center">
-              <SlidersHorizontal className="h-4 w-4" />
-              <span>Sort by</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuLabel>Sort Options</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem 
-              className={sortOption === 'distance' ? 'bg-accent text-accent-foreground' : ''}
-              onClick={() => setSortOption('distance')}
-            >
-              By Distance
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              className={sortOption === 'activity' ? 'bg-accent text-accent-foreground' : ''}
-              onClick={() => setSortOption('activity')}
-            >
-              By Activity
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              className={sortOption === 'frequency' ? 'bg-accent text-accent-foreground' : ''}
-              onClick={() => setSortOption('frequency')}
-            >
-              By Frequency
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+    <div>
+      {/* Search input */}
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          type="text"
+          placeholder="Search frequencies, locations or callsigns..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-9 bg-card/60 backdrop-blur-sm"
+        />
       </div>
       
-      {filteredFrequencies.length === 0 ? (
-        <div className="text-center py-10 glass-panel">
-          <p className="text-muted-foreground">
-            {loading ? 'Loading frequencies...' : 'No frequencies found.'}
-          </p>
-        </div>
-      ) : (
-        <div className="flex flex-col gap-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {displayedFrequencies.map((freq) => (
-              <FrequencyItem 
-                key={freq.id} 
-                frequency={freq} 
-                isNew={showNewIndicator[freq.id]}
-                isFavorite={favorites.has(freq.id)}
-                onToggleFavorite={() => onToggleFavorite(freq.id)}
-              />
-            ))}
-          </div>
+      {/* Results count */}
+      <div className="mb-4 text-sm text-muted-foreground">
+        Showing {getCurrentPageItems().length} of {displayedFrequencies.length} frequencies
+        {searchTerm && ` matching "${searchTerm}"`}
+      </div>
+      
+      {/* Frequency list */}
+      <div className="space-y-3">
+        {getCurrentPageItems().map(freq => renderFrequencyItem(freq))}
+      </div>
+      
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-6 flex justify-between items-center">
+          <button
+            onClick={handlePrevPage}
+            disabled={page === 1}
+            className="px-3 py-1 rounded-md bg-card/60 border border-border text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
           
-          {hasMoreToLoad && (
-            <div className="flex justify-center mt-4">
-              <Button 
-                variant="secondary" 
-                onClick={loadMore}
-                className="flex items-center gap-2 px-8 group"
-              >
-                <span>Show more</span>
-                <ChevronDown className="h-4 w-4 transition-transform group-hover:translate-y-0.5" />
-              </Button>
-            </div>
-          )}
+          <span className="text-sm text-muted-foreground">
+            Page {page} of {totalPages}
+          </span>
+          
+          <button
+            onClick={handleNextPage}
+            disabled={page === totalPages}
+            className="px-3 py-1 rounded-md bg-card/60 border border-border text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
         </div>
       )}
     </div>

@@ -15,9 +15,9 @@ import {
   Ship,
   Cpu,
   Plane,
-  BarChart3
+  BarChart3,
+  Signal
 } from 'lucide-react';
-import { ScrollArea } from './ui/scroll-area';
 
 interface CategoryFilterProps {
   selectedCategory: FrequencyCategory;
@@ -50,6 +50,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
     { id: 'Amateur', name: 'Amateur', icon: <Radio className="w-4 h-4" /> },
     { id: 'VOLMET', name: 'VOLMET', icon: <CloudLightning className="w-4 h-4" /> },
     { id: 'Utility', name: 'Utility', icon: <BarChart3 className="w-4 h-4" /> },
+    { id: 'APRS', name: 'APRS', icon: <Signal className="w-4 h-4" /> },
   ];
 
   // Split categories into two rows for better display
@@ -79,7 +80,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
       </div>
       
       {/* Second row of categories */}
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-2">
         {secondRowCategories.map((category) => (
           <button
             key={category.id}

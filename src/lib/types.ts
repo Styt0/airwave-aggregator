@@ -16,6 +16,7 @@ export type FrequencyCategory =
   | 'VOLMET'    // For VOLMET frequencies
   | 'Utility'   // For utility stations
   | 'Airport'   // New category for airport frequencies
+  | 'APRS'      // For APRS data
   | 'All';
 
 export type ActivityStatus = 
@@ -57,6 +58,14 @@ export interface Frequency {
   services?: string[];  // Services available at the airport
   elevationFt?: number; // Airport elevation in feet
   type?: string;        // Type of airport (international, regional, etc.)
+  callsign?: string;    // For APRS stations
+  symbol?: string;      // APRS symbol
+  course?: number;      // Course in degrees
+  speed?: number;       // Speed in km/h
+  altitude?: number;    // Altitude in meters
+  comment?: string;     // APRS comment
+  path?: string;        // APRS path
+  lastHeard?: Date;     // Last heard time for APRS stations
 }
 
 export interface NewFrequencyInput {
@@ -79,6 +88,13 @@ export interface NewFrequencyInput {
   iataCode?: string;
   elevationFt?: number;
   type?: string;
+  callsign?: string;
+  symbol?: string;
+  course?: number;
+  speed?: number;
+  altitude?: number;
+  comment?: string;
+  path?: string;
 }
 
 export interface UserLocation {

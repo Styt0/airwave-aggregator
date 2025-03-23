@@ -33,7 +33,8 @@ export const MapView: React.FC<MapViewProps> = ({
       'UHF': '#8b5cf6',        // violet-500
       'Repeaters': '#10b981',  // emerald-500
       'CW': '#f59e0b',         // amber-500
-      'HF': '#6366f1'          // indigo-500
+      'HF': '#6366f1',         // indigo-500
+      'APRS': '#84cc16'        // lime-500
     };
     
     return colorMap[category] || '#6b7280'; // gray-500 as default
@@ -83,19 +84,54 @@ export const MapView: React.FC<MapViewProps> = ({
       
       // Create a custom element for the marker
       const el = document.createElement('div');
-      el.className = 'flex items-center justify-center w-6 h-6 rounded-full border-2 border-white shadow-md cursor-pointer';
-      el.style.backgroundColor = getCategoryColor(freq.category);
+      
+      // Special styling for APRS markers
+      if (freq.category === 'APRS') {
+        el.className = 'flex items-center justify-center w-6 h-6 rounded-full border-2 border-lime-300 shadow-md cursor-pointer';
+        el.style.backgroundColor = getCategoryColor(freq.category);
+        
+        // Add directional indicator for moving APRS stations
+        if (freq.course !== undefined) {
+          const innerEl = document.createElement('div');
+          innerEl.className = 'w-2 h-2 bg-white rounded-full';
+          
+          // Create a small arrow in the direction of travel
+          const arrowEl = document.createElement('div');
+          arrowEl.className = 'absolute w-0.5 h-3 bg-white';
+          arrowEl.style.transformOrigin = 'bottom center';
+          arrowEl.style.transform = `rotate(${freq.course - 90}deg) translateY(-1px)`;
+          
+          el.appendChild(innerEl);
+          el.appendChild(arrowEl);
+        }
+      } else {
+        el.className = 'flex items-center justify-center w-6 h-6 rounded-full border-2 border-white shadow-md cursor-pointer';
+        el.style.backgroundColor = getCategoryColor(freq.category);
+      }
+      
+      const popupContent = freq.category === 'APRS' 
+        ? `
+          <div class="p-2 bg-black bg-opacity-80 text-cyan-400 border border-cyan-500 rounded">
+            <h3 class="font-bold">${freq.callsign || freq.name}</h3>
+            <p class="text-sm">${freq.frequency} MHz</p>
+            ${freq.speed !== undefined ? `<p class="text-xs text-cyan-300">Speed: ${freq.speed} km/h</p>` : ''}
+            ${freq.course !== undefined ? `<p class="text-xs text-cyan-300">Course: ${freq.course}°</p>` : ''}
+            ${freq.altitude !== undefined ? `<p class="text-xs text-cyan-300">Alt: ${freq.altitude} m</p>` : ''}
+            <p class="text-xs text-cyan-300">APRS</p>
+          </div>
+        `
+        : `
+          <div class="p-2 bg-black bg-opacity-80 text-cyan-400 border border-cyan-500 rounded">
+            <h3 class="font-bold">${freq.name}</h3>
+            <p class="text-sm">${freq.frequency} MHz</p>
+            <p class="text-xs text-cyan-300">${freq.category}</p>
+          </div>
+        `;
       
       const marker = new mapboxgl.Marker({ element: el })
         .setLngLat([longitude, latitude])
         .setPopup(new mapboxgl.Popup({ offset: 25 })
-          .setHTML(`
-            <div class="p-2 bg-black bg-opacity-80 text-cyan-400 border border-cyan-500 rounded">
-              <h3 class="font-bold">${freq.name}</h3>
-              <p class="text-sm">${freq.frequency} MHz</p>
-              <p class="text-xs text-cyan-300">${freq.category}</p>
-            </div>
-          `))
+          .setHTML(popupContent))
         .addTo(map.current);
       
       if (onSelectFrequency) {
