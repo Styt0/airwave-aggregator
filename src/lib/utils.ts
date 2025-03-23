@@ -21,6 +21,8 @@ export const categoryColors: Record<FrequencyCategory, string> = {
   'Maritime': 'bg-blue-600',
   'Digital': 'bg-teal-500',
   'Amateur': 'bg-green-600',
+  'VOLMET': 'bg-amber-600',
+  'Utility': 'bg-slate-600',
   'All': 'bg-slate-500'
 }
 

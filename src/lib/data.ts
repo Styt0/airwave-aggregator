@@ -1,4 +1,3 @@
-
 import { Frequency, ActivityStatus, NewFrequencyInput } from './types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -323,6 +322,274 @@ export const belgianRepeaters: Frequency[] = [
     activityStatus: 'yellow',
     mode: 'SSB',
     source: 'Amateur Radio Band Plan'
+  }
+];
+
+// Adding VOLMET frequencies from dxinfocentre.com
+export const volmetFrequencies: Frequency[] = [
+  {
+    id: 'volmet-1',
+    frequency: '3.413',
+    name: 'Shannon VOLMET',
+    description: 'Aviation weather for North Atlantic, UK, and Ireland',
+    category: 'VOLMET',
+    location: {
+      name: 'Shannon, Ireland',
+      coordinates: { latitude: 52.702, longitude: -8.925 }
+    },
+    lastActivity: minutesAgo(Math.floor(Math.random() * 60)),
+    activityStatus: 'green',
+    mode: 'USB',
+    source: 'DX Info Centre',
+    schedule: 'H+00, H+30',
+    language: 'English'
+  },
+  {
+    id: 'volmet-2',
+    frequency: '5.505',
+    name: 'Shannon VOLMET',
+    description: 'Aviation weather for North Atlantic, UK, and Ireland (Alt)',
+    category: 'VOLMET',
+    location: {
+      name: 'Shannon, Ireland',
+      coordinates: { latitude: 52.702, longitude: -8.925 }
+    },
+    lastActivity: minutesAgo(Math.floor(Math.random() * 60)),
+    activityStatus: 'yellow',
+    mode: 'USB',
+    source: 'DX Info Centre',
+    schedule: 'H+00, H+30',
+    language: 'English'
+  },
+  {
+    id: 'volmet-3',
+    frequency: '8.957',
+    name: 'New York VOLMET',
+    description: 'Aviation weather for North America and Atlantic',
+    category: 'VOLMET',
+    location: {
+      name: 'New York, USA',
+      coordinates: { latitude: 40.713, longitude: -74.006 }
+    },
+    lastActivity: minutesAgo(Math.floor(Math.random() * 60)),
+    activityStatus: 'green',
+    mode: 'USB',
+    source: 'DX Info Centre',
+    schedule: 'H+00, H+20, H+40',
+    language: 'English'
+  },
+  {
+    id: 'volmet-4',
+    frequency: '6.604',
+    name: 'London VOLMET',
+    description: 'Aviation weather for UK and Western Europe',
+    category: 'VOLMET',
+    location: {
+      name: 'London, UK',
+      coordinates: { latitude: 51.507, longitude: -0.128 }
+    },
+    lastActivity: minutesAgo(Math.floor(Math.random() * 60)),
+    activityStatus: 'orange',
+    mode: 'USB',
+    source: 'DX Info Centre',
+    schedule: 'Continuous',
+    language: 'English'
+  },
+  {
+    id: 'volmet-5',
+    frequency: '11.253',
+    name: 'RAF VOLMET',
+    description: 'Military aviation weather for European bases',
+    category: 'VOLMET',
+    location: {
+      name: 'UK',
+      coordinates: { latitude: 51.507, longitude: -0.128 }
+    },
+    lastActivity: minutesAgo(Math.floor(Math.random() * 60)),
+    activityStatus: 'red',
+    mode: 'USB',
+    source: 'DX Info Centre',
+    schedule: 'Continuous',
+    language: 'English'
+  },
+  {
+    id: 'volmet-6',
+    frequency: '10.051',
+    name: 'Stockholm VOLMET',
+    description: 'Aviation weather for Scandinavia',
+    category: 'VOLMET',
+    location: {
+      name: 'Stockholm, Sweden',
+      coordinates: { latitude: 59.329, longitude: 18.069 }
+    },
+    lastActivity: minutesAgo(Math.floor(Math.random() * 60)),
+    activityStatus: 'green',
+    mode: 'USB',
+    source: 'DX Info Centre',
+    schedule: 'H+15, H+45',
+    language: 'English'
+  },
+  {
+    id: 'volmet-7',
+    frequency: '127.600',
+    name: 'Brussels VOLMET',
+    description: 'Aviation weather for Brussels and surrounding airports',
+    category: 'VOLMET',
+    location: {
+      name: 'Brussels, Belgium',
+      coordinates: { latitude: 50.850, longitude: 4.352 }
+    },
+    lastActivity: minutesAgo(Math.floor(Math.random() * 60)),
+    activityStatus: 'green',
+    mode: 'AM',
+    source: 'DX Info Centre',
+    schedule: 'Continuous',
+    language: 'English'
+  },
+  {
+    id: 'volmet-8',
+    frequency: '126.400',
+    name: 'Paris VOLMET',
+    description: 'Aviation weather for Paris and surrounding airports',
+    category: 'VOLMET',
+    location: {
+      name: 'Paris, France',
+      coordinates: { latitude: 48.857, longitude: 2.352 }
+    },
+    lastActivity: minutesAgo(Math.floor(Math.random() * 60)),
+    activityStatus: 'orange',
+    mode: 'AM',
+    source: 'DX Info Centre',
+    schedule: 'Continuous',
+    language: 'English/French'
+  }
+];
+
+// Adding Utility DX frequencies from dxinfocentre.com
+export const utilityFrequencies: Frequency[] = [
+  {
+    id: 'util-1',
+    frequency: '4.583',
+    name: 'German Navy',
+    description: 'Naval communications, RTTY',
+    category: 'Utility',
+    location: {
+      name: 'Germany',
+      coordinates: { latitude: 52.520, longitude: 13.405 }
+    },
+    lastActivity: minutesAgo(Math.floor(Math.random() * 60)),
+    activityStatus: 'green',
+    mode: 'RTTY',
+    source: 'DX Info Centre'
+  },
+  {
+    id: 'util-2',
+    frequency: '8.461',
+    name: 'Russian Navy',
+    description: 'Naval communications, CW',
+    category: 'Utility',
+    location: {
+      name: 'Russia',
+      coordinates: { latitude: 59.934, longitude: 30.335 }
+    },
+    lastActivity: minutesAgo(Math.floor(Math.random() * 60)),
+    activityStatus: 'yellow',
+    mode: 'CW',
+    source: 'DX Info Centre'
+  },
+  {
+    id: 'util-3',
+    frequency: '5.696',
+    name: 'US Coast Guard',
+    description: 'Search and rescue communications',
+    category: 'Utility',
+    location: {
+      name: 'United States',
+      coordinates: { latitude: 38.895, longitude: -77.037 }
+    },
+    lastActivity: minutesAgo(Math.floor(Math.random() * 60)),
+    activityStatus: 'green',
+    mode: 'USB',
+    source: 'DX Info Centre'
+  },
+  {
+    id: 'util-4',
+    frequency: '6.739',
+    name: 'US Air Force HFGCS',
+    description: 'Global Command System, encrypted voice and data',
+    category: 'Utility',
+    location: {
+      name: 'Multiple Sites',
+      coordinates: { latitude: 38.895, longitude: -77.037 }
+    },
+    lastActivity: minutesAgo(Math.floor(Math.random() * 60)),
+    activityStatus: 'green',
+    mode: 'USB',
+    source: 'DX Info Centre'
+  },
+  {
+    id: 'util-5',
+    frequency: '11.175',
+    name: 'US Air Force HFGCS',
+    description: 'Primary HFGCS frequency, EAMs and SKYKING broadcasts',
+    category: 'Utility',
+    location: {
+      name: 'Multiple Sites',
+      coordinates: { latitude: 38.895, longitude: -77.037 }
+    },
+    lastActivity: minutesAgo(Math.floor(Math.random() * 60)),
+    activityStatus: 'green',
+    mode: 'USB',
+    source: 'DX Info Centre'
+  },
+  {
+    id: 'util-6',
+    frequency: '4.724',
+    name: 'NATO Air Defense',
+    description: 'TACAMO, Looking Glass, NATO air defense',
+    category: 'Utility',
+    location: {
+      name: 'Multiple Sites',
+      coordinates: { latitude: 50.850, longitude: 4.352 }
+    },
+    lastActivity: minutesAgo(Math.floor(Math.random() * 60)),
+    activityStatus: 'yellow',
+    mode: 'USB',
+    source: 'DX Info Centre'
+  },
+  {
+    id: 'util-7',
+    frequency: '10.000',
+    name: 'WWV Time Signal',
+    description: 'Standard time and frequency station',
+    category: 'Utility',
+    location: {
+      name: 'Fort Collins, CO, USA',
+      coordinates: { latitude: 40.681, longitude: -105.042 }
+    },
+    lastActivity: minutesAgo(Math.floor(Math.random() * 60)),
+    activityStatus: 'green',
+    mode: 'AM',
+    source: 'DX Info Centre',
+    schedule: 'Continuous',
+    language: 'English'
+  },
+  {
+    id: 'util-8',
+    frequency: '7.850',
+    name: 'North Korean Voice of Korea',
+    description: 'International broadcasting service of DPRK',
+    category: 'Utility',
+    location: {
+      name: 'Pyongyang, North Korea',
+      coordinates: { latitude: 39.019, longitude: 125.755 }
+    },
+    lastActivity: minutesAgo(Math.floor(Math.random() * 60)),
+    activityStatus: 'orange',
+    mode: 'AM',
+    source: 'DX Info Centre',
+    schedule: '1000-1050, 1300-1350, 1500-1550, 1900-1950 UTC',
+    language: 'English'
   }
 ];
 
@@ -831,7 +1098,7 @@ export const updateActivityStatus = (frequencies: Frequency[]): Frequency[] => {
 
 // Get all frequencies including custom ones and Belgian repeaters
 export const getAllFrequencies = (): Frequency[] => {
-  return [...mockFrequencies, ...belgianRepeaters, ...getCustomFrequencies()];
+  return [...mockFrequencies, ...belgianRepeaters, ...volmetFrequencies, ...utilityFrequencies, ...getCustomFrequencies()];
 };
 
 // Get favorite frequencies
@@ -839,3 +1106,4 @@ export const getFavoriteFrequencies = (frequencies: Frequency[]): Frequency[] =>
   const favoriteIds = getFavorites();
   return frequencies.filter(freq => favoriteIds.includes(freq.id));
 };
+

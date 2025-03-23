@@ -3,7 +3,7 @@ import React from 'react';
 import { Frequency } from '@/lib/types';
 import { ActivityIndicator } from './ActivityIndicator';
 import { cn } from '@/lib/utils';
-import { MapPin, Star } from 'lucide-react';
+import { MapPin, Star, Clock, Globe } from 'lucide-react';
 
 interface FrequencyItemProps {
   frequency: Frequency;
@@ -72,6 +72,11 @@ export const FrequencyItem: React.FC<FrequencyItemProps> = ({
                 New
               </span>
             )}
+            {frequency.mode && (
+              <span className="px-1.5 py-0.5 bg-primary/10 text-primary text-xs rounded-full font-medium">
+                {frequency.mode}
+              </span>
+            )}
           </div>
           <p className="text-sm text-muted-foreground mt-0.5">{frequency.description}</p>
         </div>
@@ -105,6 +110,35 @@ export const FrequencyItem: React.FC<FrequencyItemProps> = ({
           </span>
         </div>
       </div>
+      
+      {/* Additional metadata for VOLMET and utility frequencies */}
+      {(frequency.schedule || frequency.language || frequency.operationHours) && (
+        <div className="mt-2 pt-2 border-t border-border/50 grid grid-cols-2 gap-x-4 gap-y-1">
+          {frequency.schedule && (
+            <div className="flex items-center text-xs text-muted-foreground">
+              <Clock className="h-3 w-3 mr-1.5" />
+              <span>Schedule: {frequency.schedule}</span>
+            </div>
+          )}
+          {frequency.language && (
+            <div className="flex items-center text-xs text-muted-foreground">
+              <Globe className="h-3 w-3 mr-1.5" />
+              <span>Language: {frequency.language}</span>
+            </div>
+          )}
+          {frequency.operationHours && (
+            <div className="flex items-center text-xs text-muted-foreground col-span-2">
+              <Clock className="h-3 w-3 mr-1.5" />
+              <span>Hours: {frequency.operationHours}</span>
+            </div>
+          )}
+          {frequency.source && (
+            <div className="flex items-center text-xs text-muted-foreground col-span-2">
+              <span className="text-xs opacity-75">Source: {frequency.source}</span>
+            </div>
+          )}
+        </div>
+      )}
       
       <div className="absolute -z-10 inset-0 bg-gradient-to-r from-primary/5 to-primary/0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
     </div>

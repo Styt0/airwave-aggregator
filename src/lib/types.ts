@@ -12,7 +12,9 @@ export type FrequencyCategory =
   | 'Weather'
   | 'Maritime'
   | 'Digital'
-  | 'Amateur'  // New category for amateur radio
+  | 'Amateur'  
+  | 'VOLMET'    // New category for VOLMET frequencies
+  | 'Utility'   // New category for utility stations
   | 'All';
 
 export type ActivityStatus = 
@@ -45,6 +47,9 @@ export interface Frequency {
   tone?: string;        // CTCSS/DCS tone
   mode?: string;        // FM, DMR, D-STAR, etc.
   source?: string;      // Source of the frequency data
+  schedule?: string;    // For scheduled broadcasts like VOLMET
+  language?: string;    // Language of transmission
+  operationHours?: string; // Hours of operation
 }
 
 export interface NewFrequencyInput {
@@ -60,6 +65,9 @@ export interface NewFrequencyInput {
   tone?: string;
   mode?: string;
   source?: string;
+  schedule?: string;
+  language?: string;
+  operationHours?: string;
 }
 
 export interface UserLocation {

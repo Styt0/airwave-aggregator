@@ -6,7 +6,7 @@ import { FavoriteFrequencies } from './FavoriteFrequencies';
 import { MapView } from './MapView';
 import { AddFrequencyDialog } from './AddFrequencyDialog';
 import { Frequency, NewFrequencyInput, FrequencyCategory } from '@/lib/types';
-import { Map, Star, Radio, Satellite, Globe, CloudLightning, Ship, Cpu } from 'lucide-react';
+import { Map, Star, Radio, Satellite, Globe, CloudLightning, Ship, Cpu, Plane, Radio as RadioIcon, BarChart3 } from 'lucide-react';
 
 interface FrequencyTabsProps {
   frequencies: Frequency[];
@@ -67,11 +67,13 @@ export const FrequencyTabs: React.FC<FrequencyTabsProps> = ({
     switch(category) {
       case 'Space': return <Globe className="h-3.5 w-3.5" />;
       case 'Satellite': return <Satellite className="h-3.5 w-3.5" />;
-      case 'Airband': return <Radio className="h-3.5 w-3.5" />;
+      case 'Airband': return <Plane className="h-3.5 w-3.5" />;
       case 'Weather': return <CloudLightning className="h-3.5 w-3.5" />;
       case 'Maritime': return <Ship className="h-3.5 w-3.5" />;
       case 'Digital': return <Cpu className="h-3.5 w-3.5" />;
-      case 'Amateur': return <Radio className="h-3.5 w-3.5" />;
+      case 'Amateur': return <RadioIcon className="h-3.5 w-3.5" />;
+      case 'VOLMET': return <CloudLightning className="h-3.5 w-3.5" />;
+      case 'Utility': return <BarChart3 className="h-3.5 w-3.5" />;
       default: return null;
     }
   };
