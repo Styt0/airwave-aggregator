@@ -37,7 +37,7 @@ import { Plus } from 'lucide-react';
 const frequencyCategories: Exclude<FrequencyCategory, 'All'>[] = [
   'Airband', 'VHF', 'UHF', 'Repeaters', 'CW', 'HF', 'Satellite', 
   'Space', 'Military', 'Weather', 'Maritime', 'Digital', 'Amateur',
-  'VOLMET', 'Utility'
+  'VOLMET', 'Utility', 'Airport'
 ];
 
 const formSchema = z.object({
@@ -47,9 +47,14 @@ const formSchema = z.object({
   category: z.enum([
     'Airband', 'VHF', 'UHF', 'Repeaters', 'CW', 'HF', 'Satellite', 
     'Space', 'Military', 'Weather', 'Maritime', 'Digital', 'Amateur',
-    'VOLMET', 'Utility'
+    'VOLMET', 'Utility', 'Airport'
   ]),
   locationName: z.string().min(1, "Location name is required"),
+  // Airport specific fields
+  icaoCode: z.string().optional(),
+  iataCode: z.string().optional(),
+  elevationFt: z.string().optional().transform(val => val ? parseInt(val) : undefined),
+  type: z.string().optional(),
 });
 
 interface AddFrequencyDialogProps {
@@ -65,6 +70,7 @@ export const AddFrequencyDialog: React.FC<AddFrequencyDialogProps> = ({
   userCoordinates
 }) => {
   const [open, setOpen] = React.useState(false);
+  const [selectedCategory, setSelectedCategory] = React.useState<Exclude<FrequencyCategory, 'All'>>('VHF');
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -74,6 +80,9 @@ export const AddFrequencyDialog: React.FC<AddFrequencyDialogProps> = ({
       description: '',
       category: 'VHF',
       locationName: userCoordinates ? 'Your Location' : '',
+      icaoCode: '',
+      iataCode: '',
+      type: '',
     },
   });
 
@@ -81,6 +90,12 @@ export const AddFrequencyDialog: React.FC<AddFrequencyDialogProps> = ({
     onAddFrequency(values, userCoordinates);
     form.reset();
     setOpen(false);
+  };
+
+  // Handle category change to show/hide specific fields
+  const handleCategoryChange = (category: Exclude<FrequencyCategory, 'All'>) => {
+    setSelectedCategory(category);
+    form.setValue('category', category);
   };
 
   return (
@@ -121,7 +136,7 @@ export const AddFrequencyDialog: React.FC<AddFrequencyDialogProps> = ({
                   <FormItem>
                     <FormLabel>Category</FormLabel>
                     <Select 
-                      onValueChange={field.onChange} 
+                      onValueChange={(value) => handleCategoryChange(value as Exclude<FrequencyCategory, 'All'>)} 
                       defaultValue={field.value}
                     >
                       <FormControl>
@@ -195,6 +210,68 @@ export const AddFrequencyDialog: React.FC<AddFrequencyDialogProps> = ({
                 </FormItem>
               )}
             />
+            
+            {/* Airport-specific fields, only show when 'Airport' category is selected */}
+            {selectedCategory === 'Airport' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="icaoCode"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>ICAO Code</FormLabel>
+                        <FormControl>
+                          <Input placeholder="EBBR" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="iataCode"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>IATA Code</FormLabel>
+                        <FormControl>
+                          <Input placeholder="BRU" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="elevationFt"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Elevation (ft)</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="184" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="type"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Airport Type</FormLabel>
+                        <FormControl>
+                          <Input placeholder="International" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            )}
             
             <DialogFooter>
               <Button type="submit">Add Frequency</Button>

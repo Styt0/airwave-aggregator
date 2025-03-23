@@ -8,7 +8,8 @@ import {
   Wifi, 
   CircleDot, 
   Globe, 
-  Layers 
+  Layers,
+  Building2 
 } from 'lucide-react';
 
 interface CategoryFilterProps {
@@ -27,6 +28,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   }> = [
     { id: 'All', name: 'All', icon: <Layers className="w-4 h-4" /> },
     { id: 'Airband', name: 'Airband', icon: <Airplay className="w-4 h-4" /> },
+    { id: 'Airport', name: 'Airports', icon: <Building2 className="w-4 h-4" /> },
     { id: 'VHF', name: 'VHF', icon: <Radio className="w-4 h-4" /> },
     { id: 'UHF', name: 'UHF', icon: <Wifi className="w-4 h-4" /> },
     { id: 'Repeaters', name: 'Repeaters', icon: <Radio className="w-4 h-4" /> },

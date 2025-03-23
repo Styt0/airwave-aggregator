@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FrequencyTable } from './FrequencyTable';
@@ -6,7 +5,7 @@ import { FavoriteFrequencies } from './FavoriteFrequencies';
 import { MapView } from './MapView';
 import { AddFrequencyDialog } from './AddFrequencyDialog';
 import { Frequency, NewFrequencyInput, FrequencyCategory } from '@/lib/types';
-import { Map, Star, Radio, Satellite, Globe, CloudLightning, Ship, Cpu, Plane, Radio as RadioIcon, BarChart3 } from 'lucide-react';
+import { Map, Star, Radio, Satellite, Globe, CloudLightning, Ship, Cpu, Plane, Radio as RadioIcon, BarChart3, Building2 } from 'lucide-react';
 
 interface FrequencyTabsProps {
   frequencies: Frequency[];
@@ -49,12 +48,10 @@ export const FrequencyTabs: React.FC<FrequencyTabsProps> = ({
     });
   };
 
-  // Filter frequencies by selected category
   const filteredFrequencies = activeSubTab === 'All' 
     ? frequencies 
     : frequencies.filter(f => f.category === activeSubTab);
 
-  // Get unique categories from the frequencies data
   const getCategories = (): FrequencyCategory[] => {
     const categories = new Set<FrequencyCategory>(
       frequencies.map(f => f.category as FrequencyCategory)
@@ -62,7 +59,6 @@ export const FrequencyTabs: React.FC<FrequencyTabsProps> = ({
     return ['All', ...Array.from(categories)] as FrequencyCategory[];
   };
 
-  // Get icon for each category
   const getCategoryIcon = (category: string) => {
     switch(category) {
       case 'Space': return <Globe className="h-3.5 w-3.5" />;
@@ -74,11 +70,11 @@ export const FrequencyTabs: React.FC<FrequencyTabsProps> = ({
       case 'Amateur': return <RadioIcon className="h-3.5 w-3.5" />;
       case 'VOLMET': return <CloudLightning className="h-3.5 w-3.5" />;
       case 'Utility': return <BarChart3 className="h-3.5 w-3.5" />;
+      case 'Airport': return <Building2 className="h-3.5 w-3.5" />;
       default: return null;
     }
   };
 
-  // Count frequencies by category
   const getCategoryCounts = () => {
     const counts: Record<string, number> = {};
     frequencies.forEach(freq => {

@@ -13,8 +13,9 @@ export type FrequencyCategory =
   | 'Maritime'
   | 'Digital'
   | 'Amateur'  
-  | 'VOLMET'    // New category for VOLMET frequencies
-  | 'Utility'   // New category for utility stations
+  | 'VOLMET'    // For VOLMET frequencies
+  | 'Utility'   // For utility stations
+  | 'Airport'   // New category for airport frequencies
   | 'All';
 
 export type ActivityStatus = 
@@ -50,6 +51,12 @@ export interface Frequency {
   schedule?: string;    // For scheduled broadcasts like VOLMET
   language?: string;    // Language of transmission
   operationHours?: string; // Hours of operation
+  icaoCode?: string;    // ICAO code for airports
+  iataCode?: string;    // IATA code for airports
+  runways?: string[];   // Runway information
+  services?: string[];  // Services available at the airport
+  elevationFt?: number; // Airport elevation in feet
+  type?: string;        // Type of airport (international, regional, etc.)
 }
 
 export interface NewFrequencyInput {
@@ -68,6 +75,10 @@ export interface NewFrequencyInput {
   schedule?: string;
   language?: string;
   operationHours?: string;
+  icaoCode?: string;
+  iataCode?: string;
+  elevationFt?: number;
+  type?: string;
 }
 
 export interface UserLocation {
