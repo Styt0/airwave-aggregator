@@ -36,7 +36,7 @@ const SignalIdentificationPage: React.FC = () => {
             <SignalIdentification />
           </div>
           
-          {/* Information Section */}
+          {/* Information Section - Modified to use a 3-column layout */}
           <div className="w-full mt-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-card/80 backdrop-blur-md p-6 rounded-lg border border-border/50 shadow-sm flex flex-col items-center text-center">

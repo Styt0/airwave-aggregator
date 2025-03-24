@@ -1,184 +1,130 @@
-
-import React from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { FrequencyCategory } from '@/lib/types';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Plus } from 'lucide-react';
-
-const frequencyCategories: Exclude<FrequencyCategory, 'All'>[] = [
-  'Airband', 'VHF', 'UHF', 'Repeaters', 'CW', 'HF', 'Satellite', 
-  'Space', 'Military', 'Weather', 'Maritime', 'Digital', 'Amateur',
-  'VOLMET', 'Utility', 'Airport', 'APRS', 'LoRa', 'Meshtastic', 'ModeS'
-];
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
+import { useToast } from "@/components/ui/use-toast"
+import { useMapContext } from './MapContext';
 
 const formSchema = z.object({
-  frequency: z.string().min(1, "Frequency is required"),
-  name: z.string().min(1, "Name is required"),
+  frequency: z.string().min(1, {
+    message: "Frequency must be at least 1 character.",
+  }),
+  name: z.string().min(2, {
+    message: "Name must be at least 2 characters.",
+  }),
   description: z.string().optional(),
-  category: z.enum([
-    'Airband', 'VHF', 'UHF', 'Repeaters', 'CW', 'HF', 'Satellite', 
-    'Space', 'Military', 'Weather', 'Maritime', 'Digital', 'Amateur',
-    'VOLMET', 'Utility', 'Airport', 'APRS', 'LoRa', 'Meshtastic', 'ModeS'
-  ]),
-  locationName: z.string().min(1, "Location name is required"),
-  // Airport specific fields
-  icaoCode: z.string().optional(),
-  iataCode: z.string().optional(),
-  elevationFt: z.string().optional().transform(val => val ? parseInt(val) : undefined),
-  type: z.string().optional(),
-  // LoRa specific fields
-  bandwidth: z.string().optional().transform(val => val ? parseInt(val) : undefined),
-  spreadFactor: z.string().optional().transform(val => val ? parseInt(val) : undefined),
-  codingRate: z.string().optional(),
-  region: z.string().optional(),
-  // Meshtastic specific fields
-  channelName: z.string().optional(),
-  channelNum: z.string().optional().transform(val => val ? parseInt(val) : undefined),
-  // ModeS specific fields
-  aircraft: z.string().optional(),
-  operatorName: z.string().optional(),
-  modeType: z.string().optional(),
-});
+  category: z.string().min(1, {
+    message: "Please select a category.",
+  }),
+  locationName: z.string().min(2, {
+    message: "Location name must be at least 2 characters.",
+  }),
+  offset: z.string().optional(),
+  tone: z.string().optional(),
+  mode: z.string().optional(),
+  source: z.string().optional(),
+  callsign: z.string().optional(),
+  symbol: z.string().optional(),
+  course: z.string().optional(),
+  speed: z.string().optional(),
+  altitude: z.string().optional(),
+  comment: z.string().optional(),
+  path: z.string().optional(),
+})
 
 interface AddFrequencyDialogProps {
-  onAddFrequency: (
-    values: z.infer<typeof formSchema>,
-    userCoordinates: { latitude: number; longitude: number } | null
-  ) => void;
+  onAddFrequency: (values: any, coordinates: { latitude: number; longitude: number } | null) => void;
   userCoordinates: { latitude: number; longitude: number } | null;
 }
 
-export const AddFrequencyDialog: React.FC<AddFrequencyDialogProps> = ({ 
-  onAddFrequency,
-  userCoordinates
-}) => {
-  const [open, setOpen] = React.useState(false);
-  const [selectedCategory, setSelectedCategory] = React.useState<Exclude<FrequencyCategory, 'All'>>('VHF');
-  
+export const AddFrequencyDialog: React.FC<AddFrequencyDialogProps> = ({ onAddFrequency, userCoordinates }) => {
+  const { toast } = useToast()
+  const [open, setOpen] = useState(false);
+  const { selectedLocation } = useMapContext();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      frequency: '',
-      name: '',
-      description: '',
-      category: 'VHF',
-      locationName: userCoordinates ? 'Your Location' : '',
-      icaoCode: '',
-      iataCode: '',
-      type: '',
-      bandwidth: '',
-      spreadFactor: '',
-      codingRate: '',
-      region: '',
-      channelName: '',
-      channelNum: '',
-      aircraft: '',
-      operatorName: '',
-      modeType: '',
+      frequency: "",
+      name: "",
+      description: "",
+      category: "Amateur",
+      locationName: "",
+      offset: "",
+      tone: "",
+      mode: "",
+      source: "",
+      callsign: "",
+      symbol: "",
+      course: "",
+      speed: "",
+      altitude: "",
+      comment: "",
+      path: "",
     },
-  });
+  })
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    onAddFrequency(values, userCoordinates);
-    form.reset();
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    onAddFrequency(values, selectedLocation || userCoordinates);
+    toast({
+      title: "Frequency Added!",
+      description: "Your frequency has been added to the database.",
+    })
     setOpen(false);
-  };
+    form.reset();
+  }
 
-  // Handle category change to show/hide specific fields
-  const handleCategoryChange = (category: Exclude<FrequencyCategory, 'All'>) => {
-    setSelectedCategory(category);
-    form.setValue('category', category);
-  };
+  useEffect(() => {
+    if (selectedLocation) {
+      form.setValue('locationName', selectedLocation.locationName);
+    }
+  }, [selectedLocation, form]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          Add Frequency
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[525px]">
-        <DialogHeader>
-          <DialogTitle>Add New Frequency</DialogTitle>
-          <DialogDescription>
-            Enter details about the frequency you want to add.
-          </DialogDescription>
-        </DialogHeader>
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline">Add Frequency</Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Add a New Frequency</AlertDialogTitle>
+          <AlertDialogDescription>
+            Add a new frequency to the database.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="frequency"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Frequency (MHz)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="145.500" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <Select 
-                      onValueChange={(value) => handleCategoryChange(value as Exclude<FrequencyCategory, 'All'>)} 
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {frequencyCategories.map((category) => (
-                          <SelectItem key={category} value={category}>
-                            {category}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="frequency"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Frequency</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter frequency" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="name"
@@ -186,13 +132,12 @@ export const AddFrequencyDialog: React.FC<AddFrequencyDialogProps> = ({
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="VHF Calling Frequency" {...field} />
+                    <Input placeholder="Enter name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
             <FormField
               control={form.control}
               name="description"
@@ -200,19 +145,48 @@ export const AddFrequencyDialog: React.FC<AddFrequencyDialogProps> = ({
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Common simplex calling frequency" 
-                      {...field} 
+                    <Textarea
+                      placeholder="Enter description"
+                      className="resize-none"
+                      {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Optional details about this frequency
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Amateur">Amateur</SelectItem>
+                      <SelectItem value="Airband">Airband</SelectItem>
+                      <SelectItem value="Maritime">Maritime</SelectItem>
+                      <SelectItem value="Weather">Weather</SelectItem>
+                      <SelectItem value="Digital">Digital</SelectItem>
+                      <SelectItem value="Space">Space</SelectItem>
+                      <SelectItem value="Satellite">Satellite</SelectItem>
+                      <SelectItem value="Utility">Utility</SelectItem>
+                      <SelectItem value="Airport">Airport</SelectItem>
+                      <SelectItem value="APRS">APRS</SelectItem>
+                      <SelectItem value="LoRa">LoRa</SelectItem>
+                      <SelectItem value="Meshtastic">Meshtastic</SelectItem>
+                       <SelectItem value="ModeS">ModeS</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="locationName"
@@ -220,257 +194,162 @@ export const AddFrequencyDialog: React.FC<AddFrequencyDialogProps> = ({
                 <FormItem>
                   <FormLabel>Location Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Brussels" {...field} />
+                    <Input placeholder="Enter location name" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    {userCoordinates 
-                      ? "Will use your current coordinates for location data" 
-                      : "Enable location services to include your coordinates"}
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
-            {/* Airport-specific fields, only show when 'Airport' category is selected */}
-            {selectedCategory === 'Airport' && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="icaoCode"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>ICAO Code</FormLabel>
-                        <FormControl>
-                          <Input placeholder="EBBR" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="iataCode"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>IATA Code</FormLabel>
-                        <FormControl>
-                          <Input placeholder="BRU" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="elevationFt"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Elevation (ft)</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="184" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="type"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Airport Type</FormLabel>
-                        <FormControl>
-                          <Input placeholder="International" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* LoRa-specific fields */}
-            {selectedCategory === 'LoRa' && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="bandwidth"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Bandwidth (kHz)</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="125" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="spreadFactor"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Spreading Factor</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="7" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="codingRate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Coding Rate</FormLabel>
-                        <FormControl>
-                          <Input placeholder="4/5" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="region"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Region</FormLabel>
-                        <FormControl>
-                          <Input placeholder="EU868" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Meshtastic-specific fields */}
-            {selectedCategory === 'Meshtastic' && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="channelName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Channel Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Default" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="channelNum"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Channel Number</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="1" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="region"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Region</FormLabel>
-                        <FormControl>
-                          <Input placeholder="EU868" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="bandwidth"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Bandwidth (kHz)</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="125" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Mode-S specific fields */}
-            {selectedCategory === 'ModeS' && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="aircraft"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Aircraft Type</FormLabel>
-                        <FormControl>
-                          <Input placeholder="F-16" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="modeType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Mode Type</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Mode-S" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <FormField
-                  control={form.control}
-                  name="operatorName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Military Operator</FormLabel>
-                      <FormControl>
-                        <Input placeholder="NATO" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            )}
-            
-            <DialogFooter>
-              <Button type="submit">Add Frequency</Button>
-            </DialogFooter>
+            <FormField
+              control={form.control}
+              name="offset"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Offset</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter offset" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="tone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tone</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter tone" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="mode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mode</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter mode" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="source"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Source</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter source" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="callsign"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Callsign</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter callsign" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="symbol"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Symbol</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter symbol" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="course"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Course</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter course" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="speed"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Speed</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter speed" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="altitude"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Altitude</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter altitude" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="comment"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Comment</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter comment" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="path"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Path</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter path" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction type="submit">Add Frequency</AlertDialogAction>
+            </AlertDialogFooter>
           </form>
         </Form>
-      </DialogContent>
-    </Dialog>
-  );
-};
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}
