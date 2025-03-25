@@ -10,6 +10,16 @@ const SignalIdentificationPage: React.FC = () => {
     <main className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 md:px-8">
         <div className="flex flex-col space-y-6">
+          {/* Logo */}
+          <div className="flex justify-center mb-4">
+            <div className="relative">
+              <RadioTower className="h-16 w-16 text-primary radar-ping" />
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-14 h-14 opacity-30 animate-pulse rounded-full bg-primary/20"></div>
+              <div className="absolute top-1 left-1/2 -translate-x-1/2 w-12 h-12 opacity-20 animate-pulse rounded-full bg-primary/10" style={{ animationDelay: '0.5s' }}></div>
+              <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-10 opacity-10 animate-pulse rounded-full bg-primary/5" style={{ animationDelay: '1s' }}></div>
+            </div>
+          </div>
+          
           {/* Navigation */}
           <div className="flex items-center justify-between">
             <Link to="/">
