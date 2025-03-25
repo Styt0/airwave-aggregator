@@ -2,12 +2,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { Frequency, FrequencyCategory } from '@/lib/types';
-import { categoryColors } from '@/lib/utils';
-import { Map, MapPin } from 'lucide-react';
-
-// Mapbox token provided by user
-const MAPBOX_TOKEN = 'pk.eyJ1Ijoic3R5dG8iLCJhIjoiY204a2VtOXhkMHhqZTJrcXI5bjlyZjhsNSJ9.xeo91AG44Yz9q-zp7LEMrg';
+import { Frequency } from '@/lib/types';
+import { MAPBOX_TOKEN } from '@/lib/utils/mapUtils';
+import { EmptyMapState } from './map/EmptyMapState';
+import { FrequencyMarkers } from './map/FrequencyMarkers';
+import { UserLocationMarker } from './map/UserLocationMarker';
 
 interface MapViewProps {
   frequencies: Frequency[];
@@ -22,23 +21,7 @@ export const MapView: React.FC<MapViewProps> = ({
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const markers = useRef<mapboxgl.Marker[]>([]);
-  const userMarker = useRef<mapboxgl.Marker | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
-
-  const getCategoryColor = (category: FrequencyCategory): string => {
-    const colorMap: Record<string, string> = {
-      'Airband': '#ef4444',    // red-500
-      'VHF': '#3b82f6',        // blue-500
-      'UHF': '#8b5cf6',        // violet-500
-      'Repeaters': '#10b981',  // emerald-500
-      'CW': '#f59e0b',         // amber-500
-      'HF': '#6366f1',         // indigo-500
-      'APRS': '#84cc16'        // lime-500
-    };
-    
-    return colorMap[category] || '#6b7280'; // gray-500 as default
-  };
 
   // Initialize map
   useEffect(() => {
@@ -64,128 +47,13 @@ export const MapView: React.FC<MapViewProps> = ({
     });
 
     return () => {
-      markers.current.forEach(marker => marker.remove());
-      if (userMarker.current) userMarker.current.remove();
       map.current?.remove();
       map.current = null;
     };
-  }, []);
-
-  // Add markers for frequencies
-  useEffect(() => {
-    if (!map.current || !mapLoaded) return;
-    
-    // Clear existing markers
-    markers.current.forEach(marker => marker.remove());
-    markers.current = [];
-    
-    frequencies.forEach(freq => {
-      const { latitude, longitude } = freq.location.coordinates;
-      
-      // Create a custom element for the marker
-      const el = document.createElement('div');
-      
-      // Special styling for APRS markers
-      if (freq.category === 'APRS') {
-        el.className = 'flex items-center justify-center w-6 h-6 rounded-full border-2 border-lime-300 shadow-md cursor-pointer';
-        el.style.backgroundColor = getCategoryColor(freq.category);
-        
-        // Add directional indicator for moving APRS stations
-        if (freq.course !== undefined) {
-          const innerEl = document.createElement('div');
-          innerEl.className = 'w-2 h-2 bg-white rounded-full';
-          
-          // Create a small arrow in the direction of travel
-          const arrowEl = document.createElement('div');
-          arrowEl.className = 'absolute w-0.5 h-3 bg-white';
-          arrowEl.style.transformOrigin = 'bottom center';
-          arrowEl.style.transform = `rotate(${freq.course - 90}deg) translateY(-1px)`;
-          
-          el.appendChild(innerEl);
-          el.appendChild(arrowEl);
-        }
-      } else {
-        el.className = 'flex items-center justify-center w-6 h-6 rounded-full border-2 border-white shadow-md cursor-pointer';
-        el.style.backgroundColor = getCategoryColor(freq.category);
-      }
-      
-      const popupContent = freq.category === 'APRS' 
-        ? `
-          <div class="p-2 bg-black bg-opacity-80 text-cyan-400 border border-cyan-500 rounded">
-            <h3 class="font-bold">${freq.callsign || freq.name}</h3>
-            <p class="text-sm">${freq.frequency} MHz</p>
-            ${freq.speed !== undefined ? `<p class="text-xs text-cyan-300">Speed: ${freq.speed} km/h</p>` : ''}
-            ${freq.course !== undefined ? `<p class="text-xs text-cyan-300">Course: ${freq.course}°</p>` : ''}
-            ${freq.altitude !== undefined ? `<p class="text-xs text-cyan-300">Alt: ${freq.altitude} m</p>` : ''}
-            <p class="text-xs text-cyan-300">APRS</p>
-          </div>
-        `
-        : `
-          <div class="p-2 bg-black bg-opacity-80 text-cyan-400 border border-cyan-500 rounded">
-            <h3 class="font-bold">${freq.name}</h3>
-            <p class="text-sm">${freq.frequency} MHz</p>
-            <p class="text-xs text-cyan-300">${freq.category}</p>
-          </div>
-        `;
-      
-      const marker = new mapboxgl.Marker({ element: el })
-        .setLngLat([longitude, latitude])
-        .setPopup(new mapboxgl.Popup({ offset: 25 })
-          .setHTML(popupContent))
-        .addTo(map.current);
-      
-      if (onSelectFrequency) {
-        el.addEventListener('click', () => {
-          onSelectFrequency(freq.id);
-        });
-      }
-      
-      markers.current.push(marker);
-    });
-  }, [frequencies, mapLoaded, onSelectFrequency]);
-
-  // Add user location marker
-  useEffect(() => {
-    if (!map.current || !mapLoaded || !userCoordinates) return;
-    
-    if (userMarker.current) {
-      userMarker.current.remove();
-    }
-
-    // Create a custom element for the user marker
-    const el = document.createElement('div');
-    el.className = 'relative flex items-center justify-center w-8 h-8 rounded-full bg-cyan-500 border-2 border-white shadow-lg radar-ping';
-    
-    // Adding a centered inner dot
-    const innerDot = document.createElement('div');
-    innerDot.className = 'absolute w-4 h-4 bg-cyan-300 rounded-full';
-    el.appendChild(innerDot);
-    
-    userMarker.current = new mapboxgl.Marker({ element: el })
-      .setLngLat([userCoordinates.longitude, userCoordinates.latitude])
-      .setPopup(new mapboxgl.Popup({ offset: 25 })
-        .setHTML('<div class="p-2 bg-black bg-opacity-80 text-cyan-400 border border-cyan-500 rounded"><strong>Your Location</strong></div>'))
-      .addTo(map.current);
-    
-    // Center the map on user's location
-    map.current.flyTo({
-      center: [userCoordinates.longitude, userCoordinates.latitude],
-      zoom: 9,
-      essential: true
-    });
-    
-  }, [userCoordinates, mapLoaded]);
+  }, [userCoordinates]);
 
   if (!frequencies.length) {
-    return (
-      <div className="text-center py-8 border border-dashed rounded-xl">
-        <Map className="w-10 h-10 mx-auto text-muted-foreground/50 mb-2" />
-        <h3 className="text-lg font-medium text-muted-foreground">No frequencies to display</h3>
-        <p className="text-sm text-muted-foreground/70 mt-1">
-          Add frequencies to see them on the map
-        </p>
-      </div>
-    );
+    return <EmptyMapState />;
   }
 
   return (
@@ -194,6 +62,26 @@ export const MapView: React.FC<MapViewProps> = ({
         ref={mapContainer} 
         className="absolute inset-0 bg-muted" 
       />
+      
+      {mapLoaded && (
+        <>
+          <FrequencyMarkers 
+            map={map.current}
+            frequencies={frequencies}
+            mapLoaded={mapLoaded}
+            onSelectFrequency={onSelectFrequency}
+          />
+          
+          {userCoordinates && (
+            <UserLocationMarker
+              map={map.current}
+              coordinates={userCoordinates}
+              mapLoaded={mapLoaded}
+            />
+          )}
+        </>
+      )}
+      
       <div className="absolute bottom-2 left-2 z-10 text-xs text-cyan-300 bg-black/80 px-2 py-1 rounded-md">
         Map data provided by Mapbox
       </div>
