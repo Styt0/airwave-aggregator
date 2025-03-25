@@ -29,7 +29,7 @@ const Index = () => {
     setUserLocation
   } = useFrequencyData();
   
-  const { requestUserLocation } = useLocationManager(userLocation, setUserLocation);
+  const { getUserLocation } = useLocationManager();
   
   const { handleToggleFavorite } = useFavoriteManager(
     frequencies,
@@ -69,7 +69,7 @@ const Index = () => {
             <div className="w-full">
               <LocationSelector 
                 userLocation={userLocation}
-                onRequestLocation={requestUserLocation}
+                onRequestLocation={getUserLocation}
               />
             </div>
             
