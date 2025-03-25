@@ -1,9 +1,10 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FrequencyTable } from './FrequencyTable';
 import { FavoriteFrequencies } from './FavoriteFrequencies';
 import { MapView } from './MapView';
-import { AddFrequencyDialog } from './AddFrequencyDialog';
+import { AddFrequencyDialog } from './frequency-dialog/AddFrequencyDialog';
 import { Frequency, NewFrequencyInput, FrequencyCategory } from '@/lib/types';
 import { Map, Star, Radio, Satellite, Globe, CloudLightning, Ship, Cpu, Plane, Radio as RadioIcon, BarChart3, Building2, Signal, Network, Radar, PlaneTakeoff } from 'lucide-react';
 

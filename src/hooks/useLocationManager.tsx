@@ -1,69 +1,67 @@
 
+import { useState, useEffect, useCallback } from 'react';
 import { UserLocation } from '@/lib/types';
-import { useToast } from '@/components/ui/use-toast';
 
-export const useLocationManager = (
-  userLocation: UserLocation,
-  setUserLocation: (location: UserLocation) => void
-) => {
-  const { toast } = useToast();
+export const useLocationManager = () => {
+  const [userLocation, setUserLocation] = useState<UserLocation>({
+    coordinates: null,
+    loading: false,
+    error: null,
+  });
 
-  const requestUserLocation = () => {
+  const getUserLocation = useCallback(() => {
+    setUserLocation(prev => ({
+      ...prev,
+      loading: true,
+      error: null
+    }));
+    
     if (!navigator.geolocation) {
-      setUserLocation({
-        coordinates: null,
+      setUserLocation(prev => ({
+        ...prev,
         loading: false,
-        error: 'Geolocation is not supported by your browser',
-      });
+        error: 'Geolocation is not supported by your browser'
+      }));
       return;
     }
-
-    setUserLocation(prev => ({ ...prev, loading: true, error: null }));
-
+    
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const { latitude, longitude } = position.coords;
         setUserLocation({
-          coordinates: { latitude, longitude },
+          coordinates: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          },
           loading: false,
-          error: null,
-        });
-        
-        toast({
-          title: 'Location updated',
-          description: 'Frequencies sorted by proximity to your location',
+          error: null
         });
       },
       (error) => {
-        console.error('Error getting user location:', error);
+        let errorMessage = 'Unknown error occurred while retrieving location';
+        if (error.code === 1) {
+          errorMessage = 'Permission denied to access location';
+        } else if (error.code === 2) {
+          errorMessage = 'Position unavailable';
+        } else if (error.code === 3) {
+          errorMessage = 'Timeout retrieving location';
+        }
+        
         setUserLocation({
           coordinates: null,
           loading: false,
-          error: getGeolocationErrorMessage(error),
+          error: errorMessage
         });
-        
-        toast({
-          title: 'Location error',
-          description: getGeolocationErrorMessage(error),
-          variant: 'destructive',
-        });
-      },
-      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+      }
     );
-  };
+  }, []);
 
-  const getGeolocationErrorMessage = (error: GeolocationPositionError): string => {
-    switch (error.code) {
-      case error.PERMISSION_DENIED:
-        return 'Location access was denied. Please enable location in your browser settings.';
-      case error.POSITION_UNAVAILABLE:
-        return 'Location information is unavailable.';
-      case error.TIMEOUT:
-        return 'The request to get your location timed out.';
-      default:
-        return 'An unknown error occurred while getting your location.';
-    }
-  };
+  useEffect(() => {
+    // Try to get location when component mounts
+    getUserLocation();
+  }, [getUserLocation]);
 
-  return { requestUserLocation };
+  return {
+    userLocation,
+    getUserLocation
+  };
 };
