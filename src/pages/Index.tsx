@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { FrequencyCategory, NewFrequencyInput, Frequency } from '@/lib/types';
 import { getFrequenciesByCategory, addFrequency } from '@/lib/data';
 import { CategoryFilter } from '@/components/CategoryFilter';
-import { FrequencyTabs } from '@/components/FrequencyTabs';
+import { FrequencyTabs } from '@/components/frequency-tabs/FrequencyTabs';
 import { LocationSelector } from '@/components/LocationSelector';
 import FrequencyHeader from '@/components/FrequencyHeader';
 import { useFrequencyData } from '@/hooks/useFrequencyData';
