@@ -25,7 +25,8 @@ export const useFrequencyData = () => {
     const loadData = async () => {
       setLoading(true);
       try {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Removed artificial delay that was causing extended loading
+        // await new Promise(resolve => setTimeout(resolve, 1000));
         
         const allFreqs = getAllFrequencies();
         setFrequencies(allFreqs);
@@ -41,7 +42,7 @@ export const useFrequencyData = () => {
           variant: 'destructive',
         });
       } finally {
-        setLoading(false);
+        setLoading(false); // Make sure loading is set to false when done
       }
     };
     
